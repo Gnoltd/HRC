@@ -54,6 +54,9 @@
                             <span>👤 {{ project.supervisor }}</span>
                             <span>📅 {{ project.deadline }}</span>
                         </div>
+                        {% if project.file_name %}
+                        <p class="project-file">📎 Includes PDF document</p>
+                        {% endif %}
                         <a href="/project/{{ project.id }}" class="btn btn-small">View Details</a>
                     </div>
                     {% endfor %}

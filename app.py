@@ -1,13 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 import firebase_admin
-from firebase_admin import credentials, firestore
+from firebase_admin import credentials, firestore, storage
 from datetime import datetime
+from werkzeug.utils import secure_filename
 import os
+import io
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+ALLOWED_EXTENSIONS = {'pdf'}
 
 # Define categories as a constant
 CATEGORIES = ['Science', 'Technology', 'Engineering', 'Mathematics', 'Arts', 'Social Sciences']
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Initialize Firebase
 def initialize_firebase():
@@ -19,16 +28,24 @@ def initialize_firebase():
         # Initialize Firebase with service account
         if os.path.exists('firebase_credentials.json'):
             cred = credentials.Certificate('firebase_credentials.json')
-            firebase_admin.initialize_app(cred)
+            # Initialize with storage bucket
+            firebase_admin.initialize_app(cred, {
+                'storageBucket': 'hsbresearchprj.appspot.com'
+            })
         else:
             # For development/testing without credentials
             # You'll need to add firebase_credentials.json for production
             print("Warning: Firebase credentials not found. Running in demo mode.")
-            return None
+            return None, None
     
-    return firestore.client()
+    try:
+        bucket = storage.bucket()
+    except:
+        bucket = None
+    
+    return firestore.client(), bucket
 
-db = initialize_firebase()
+db, bucket = initialize_firebase()
 
 @app.route('/')
 def index():
@@ -37,13 +54,13 @@ def index():
 
 @app.route('/projects')
 def projects():
-    """Display all projects"""
+    """Display all approved projects"""
     projects_list = []
     
     if db:
         try:
-            # Get all projects from Firebase
-            projects_ref = db.collection('projects')
+            # Get only approved projects from Firebase
+            projects_ref = db.collection('projects').where('approved', '==', True)
             docs = projects_ref.order_by('created_at', direction=firestore.Query.DESCENDING).stream()
             
             for doc in docs:
@@ -93,6 +110,35 @@ def submit():
                                  message_type='error')
         
         try:
+            # Handle file upload
+            file_url = None
+            file_name = None
+            if 'project_file' in request.files:
+                file = request.files['project_file']
+                if file and file.filename and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    # Add timestamp to filename to avoid conflicts
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    unique_filename = f"{timestamp}_{filename}"
+                    
+                    if bucket:
+                        try:
+                            # Upload to Firebase Storage
+                            blob = bucket.blob(f'projects/{unique_filename}')
+                            blob.upload_from_string(
+                                file.read(),
+                                content_type='application/pdf'
+                            )
+                            # Make file accessible with token (or public if needed)
+                            blob.make_public()
+                            file_url = blob.public_url
+                            file_name = filename
+                        except Exception as e:
+                            print(f"Error uploading file: {e}")
+                            return render_template('submit.html', 
+                                                 message=f'Error uploading file: {str(e)}', 
+                                                 message_type='error')
+            
             # Get form data
             project_data = {
                 'title': request.form.get('title'),
@@ -104,7 +150,11 @@ def submit():
                 'deadline': request.form.get('deadline'),
                 'requirements': request.form.get('requirements', ''),
                 'contact': request.form.get('contact'),
-                'created_at': datetime.now()
+                'created_at': datetime.now(),
+                'approved': False,  # New projects require approval
+                'status': 'pending',  # pending, approved, rejected
+                'file_url': file_url,
+                'file_name': file_name
             }
             
             # Validate required fields
@@ -117,7 +167,7 @@ def submit():
             db.collection('projects').add(project_data)
             
             return render_template('submit.html', 
-                                 message='Project submitted successfully!', 
+                                 message='Project submitted successfully! It will be visible after admin approval.', 
                                  message_type='success')
         except Exception as e:
             error_msg = str(e)
@@ -147,7 +197,8 @@ def setup():
 @app.route('/admin')
 def admin():
     """Admin panel to manage projects"""
-    projects_list = []
+    pending_projects = []
+    approved_projects = []
     total_projects = 0
     active_projects = 0
     
@@ -163,7 +214,12 @@ def admin():
                 # Format date for display
                 if 'created_at' in project_data:
                     project_data['created_at'] = project_data['created_at'].strftime('%Y-%m-%d')
-                projects_list.append(project_data)
+                
+                # Separate pending and approved projects
+                if project_data.get('approved', False):
+                    approved_projects.append(project_data)
+                else:
+                    pending_projects.append(project_data)
                 
                 # Count active projects (deadline not passed)
                 try:
@@ -173,22 +229,72 @@ def admin():
                 except (ValueError, TypeError):
                     pass
             
-            total_projects = len(projects_list)
+            total_projects = len(pending_projects) + len(approved_projects)
         except Exception as e:
             print(f"Error fetching projects: {e}")
     
     return render_template('admin.html', 
-                         projects=projects_list, 
+                         pending_projects=pending_projects,
+                         approved_projects=approved_projects,
                          total_projects=total_projects,
                          active_projects=active_projects,
                          num_categories=len(CATEGORIES))
+
+@app.route('/api/projects/<project_id>/approve', methods=['POST'])
+def approve_project(project_id):
+    """Approve a project (Admin only)"""
+    if db:
+        try:
+            db.collection('projects').document(project_id).update({
+                'approved': True,
+                'status': 'approved'
+            })
+            return jsonify({'success': True, 'message': 'Project approved successfully'})
+        except Exception as e:
+            print(f"Error approving project: {e}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+    else:
+        return jsonify({'success': False, 'message': 'Database not configured'}), 500
+
+@app.route('/api/projects/<project_id>/reject', methods=['POST'])
+def reject_project(project_id):
+    """Reject a project (Admin only)"""
+    if db:
+        try:
+            db.collection('projects').document(project_id).update({
+                'approved': False,
+                'status': 'rejected'
+            })
+            return jsonify({'success': True, 'message': 'Project rejected successfully'})
+        except Exception as e:
+            print(f"Error rejecting project: {e}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+    else:
+        return jsonify({'success': False, 'message': 'Database not configured'}), 500
 
 @app.route('/api/projects/<project_id>', methods=['DELETE'])
 def delete_project(project_id):
     """Delete a project (API endpoint)"""
     if db:
         try:
-            db.collection('projects').document(project_id).delete()
+            # Get project data to delete file if exists
+            doc_ref = db.collection('projects').document(project_id)
+            doc = doc_ref.get()
+            if doc.exists and bucket:
+                project_data = doc.to_dict()
+                file_url = project_data.get('file_url')
+                if file_url:
+                    try:
+                        # Extract blob name from URL and delete from storage
+                        file_name = project_data.get('file_name', '')
+                        if file_name:
+                            blob = bucket.blob(f'projects/{file_name}')
+                            blob.delete()
+                    except Exception as e:
+                        print(f"Error deleting file from storage: {e}")
+            
+            # Delete the project document
+            doc_ref.delete()
             return jsonify({'success': True, 'message': 'Project deleted successfully'})
         except Exception as e:
             print(f"Error deleting project: {e}")

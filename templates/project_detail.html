@@ -78,6 +78,17 @@
                 </div>
                 {% endif %}
 
+                {% if project.file_url %}
+                <div class="detail-section">
+                    <h2>Project Document</h2>
+                    <p>
+                        <a href="{{ project.file_url }}" target="_blank" class="btn btn-primary">
+                            📄 View/Download PDF: {{ project.file_name }}
+                        </a>
+                    </p>
+                </div>
+                {% endif %}
+
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="applyProject()">Apply for this Project</button>
                 </div>
