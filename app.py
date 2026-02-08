@@ -6,6 +6,9 @@ import os
 
 app = Flask(__name__)
 
+# Define categories as a constant
+CATEGORIES = ['Science', 'Technology', 'Engineering', 'Mathematics', 'Arts', 'Social Sciences']
+
 # Initialize Firebase
 def initialize_firebase():
     """Initialize Firebase with credentials"""
@@ -144,7 +147,7 @@ def admin():
                     deadline = datetime.strptime(project_data.get('deadline', ''), '%Y-%m-%d')
                     if deadline > datetime.now():
                         active_projects += 1
-                except:
+                except (ValueError, TypeError):
                     pass
             
             total_projects = len(projects_list)
@@ -154,7 +157,8 @@ def admin():
     return render_template('admin.html', 
                          projects=projects_list, 
                          total_projects=total_projects,
-                         active_projects=active_projects)
+                         active_projects=active_projects,
+                         num_categories=len(CATEGORIES))
 
 @app.route('/api/projects/<project_id>', methods=['DELETE'])
 def delete_project(project_id):
@@ -194,4 +198,6 @@ def get_projects_api():
 
 if __name__ == '__main__':
     # Run the application
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Debug mode should be disabled in production
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)
