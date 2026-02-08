@@ -87,37 +87,55 @@ def project_detail(project_id):
 def submit():
     """Submit a new project"""
     if request.method == 'POST':
-        if db:
-            try:
-                # Get form data
-                project_data = {
-                    'title': request.form.get('title'),
-                    'category': request.form.get('category'),
-                    'description': request.form.get('description'),
-                    'supervisor': request.form.get('supervisor'),
-                    'department': request.form.get('department', ''),
-                    'duration': request.form.get('duration', ''),
-                    'deadline': request.form.get('deadline'),
-                    'requirements': request.form.get('requirements', ''),
-                    'contact': request.form.get('contact'),
-                    'created_at': datetime.now()
-                }
-                
-                # Add to Firebase
-                db.collection('projects').add(project_data)
-                
-                return render_template('submit.html', 
-                                     message='Project submitted successfully!', 
-                                     message_type='success')
-            except Exception as e:
-                print(f"Error submitting project: {e}")
-                return render_template('submit.html', 
-                                     message='Error submitting project. Please try again.', 
-                                     message_type='error')
-        else:
+        if db is None:
             return render_template('submit.html', 
-                                 message='Database not configured. Please add Firebase credentials.', 
+                                 message='Database not configured. Please contact the administrator to set up Firebase credentials.', 
                                  message_type='error')
+        
+        try:
+            # Get form data
+            project_data = {
+                'title': request.form.get('title'),
+                'category': request.form.get('category'),
+                'description': request.form.get('description'),
+                'supervisor': request.form.get('supervisor'),
+                'department': request.form.get('department', ''),
+                'duration': request.form.get('duration', ''),
+                'deadline': request.form.get('deadline'),
+                'requirements': request.form.get('requirements', ''),
+                'contact': request.form.get('contact'),
+                'created_at': datetime.now()
+            }
+            
+            # Validate required fields
+            if not project_data['title'] or not project_data['category'] or not project_data['description']:
+                return render_template('submit.html', 
+                                     message='Please fill in all required fields (Title, Category, Description).', 
+                                     message_type='error')
+            
+            # Add to Firebase
+            db.collection('projects').add(project_data)
+            
+            return render_template('submit.html', 
+                                 message='Project submitted successfully!', 
+                                 message_type='success')
+        except Exception as e:
+            error_msg = str(e)
+            print(f"Error submitting project: {error_msg}")
+            
+            # Provide more specific error messages
+            if 'PERMISSION_DENIED' in error_msg or 'permission' in error_msg.lower():
+                return render_template('submit.html', 
+                                     message='Permission denied. Please check Firestore security rules.', 
+                                     message_type='error')
+            elif 'NOT_FOUND' in error_msg or 'not found' in error_msg.lower():
+                return render_template('submit.html', 
+                                     message='Database not found. Please ensure Firestore is enabled in Firebase Console.', 
+                                     message_type='error')
+            else:
+                return render_template('submit.html', 
+                                     message=f'Error submitting project: {error_msg}. Please try again or contact support.', 
+                                     message_type='error')
     
     return render_template('submit.html')
 
