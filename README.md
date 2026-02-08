@@ -10,6 +10,7 @@ A web platform for posting and discovering educational research opportunities an
 - **Admin Panel**: Manage projects with statistics and delete functionality
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Firebase Integration**: Real-time database for secure data storage
+- **Analytics**: Google Analytics integration for usage tracking and insights
 
 ## Technology Stack
 
@@ -17,10 +18,12 @@ A web platform for posting and discovering educational research opportunities an
 - HTML5
 - CSS3 (Responsive Design)
 - JavaScript (Vanilla)
+- Firebase Web SDK (Analytics)
 
 ### Backend
 - Python 3.x
 - Flask (Web Framework)
+- Firebase Admin SDK
 
 ### Database
 - Firebase Firestore (NoSQL Database)
@@ -51,17 +54,26 @@ A web platform for posting and discovering educational research opportunities an
    
    b. Create a new project or use an existing one
    
-   c. Go to Project Settings > Service Accounts
+   c. **For Backend (Admin SDK)**:
+      - Go to Project Settings > Service Accounts
+      - Click "Generate New Private Key"
+      - Save the downloaded JSON file as `firebase_credentials.json` in the project root
    
-   d. Click "Generate New Private Key"
+   d. **For Frontend (Web SDK)**:
+      - The Firebase Web SDK configuration is already included in `static/js/firebase-config.js`
+      - This enables Google Analytics for usage tracking
+      - No additional setup needed for basic analytics
    
-   e. Save the downloaded JSON file as `firebase_credentials.json` in the project root
-   
-   f. In Firebase Console, create a Firestore database:
+   e. In Firebase Console, create a Firestore database:
       - Click "Firestore Database" in the left menu
       - Click "Create database"
       - Choose "Start in test mode" (for development)
       - Select your preferred location
+   
+   f. (Optional) Enable Google Analytics:
+      - Go to Project Settings > Integrations
+      - Enable Google Analytics
+      - Configure analytics settings
 
 4. **Run the application**
    ```bash
@@ -161,14 +173,22 @@ gunicorn -w 4 -b 0.0.0.0:8000 app:app
 ### Security Considerations
 
 - Keep `firebase_credentials.json` secure and never commit to Git
-- Update Firestore security rules for production
+- Update Firestore security rules for production (see `FIREBASE_INTEGRATION.md`)
 - Implement user authentication for admin panel
 - Add CSRF protection for forms
 - Enable CORS policies as needed
+- Configure authorized domains in Firebase Console
+- The Firebase Web SDK API key in client code is public (this is normal and secure)
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Additional Documentation
+
+- **[FIREBASE_INTEGRATION.md](FIREBASE_INTEGRATION.md)** - Detailed Firebase setup and integration guide
+- **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide for getting up and running
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture overview
 
 ## License
 
