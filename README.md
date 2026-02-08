@@ -2,6 +2,16 @@
 
 A web platform for posting and discovering educational research opportunities and projects.
 
+## 🚀 Quick Start
+
+**Encountering setup issues?** Visit the built-in setup guide at `/setup` for step-by-step instructions!
+
+For the "database does not exist" error:
+1. Start the app: `python app.py`
+2. Open: `http://localhost:5000/setup`
+3. Follow the visual setup checklist
+4. Create your Firestore database in minutes
+
 ## Features
 
 - **Browse Projects**: View all available education projects with filtering and search capabilities
