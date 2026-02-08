@@ -94,6 +94,31 @@ For the "database does not exist" error:
    
    Open your browser and navigate to: `http://localhost:5000`
 
+## 🌐 Deployment
+
+Ready to make your platform publicly accessible? See the comprehensive **[DEPLOYMENT.md](DEPLOYMENT.md)** guide for detailed instructions on deploying to:
+
+- **Google Cloud Platform** (recommended for Firebase integration)
+- **Heroku** (easy deployment with free tier)
+- **Railway** (modern, simple deployment)
+- **Render** (automatic SSL, free tier)
+- **Docker** (containerized deployment)
+- **Traditional VPS** (DigitalOcean, AWS, etc.)
+
+Quick deployment options:
+```bash
+# Heroku
+heroku create your-app-name
+git push heroku main
+
+# Railway - just connect your GitHub repo at railway.app
+
+# Google Cloud
+gcloud app deploy
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for complete step-by-step guides!
+
 ## Project Structure
 
 ```
@@ -196,7 +221,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Additional Documentation
 
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Complete guide for deploying as a public host
 - **[FIREBASE_INTEGRATION.md](FIREBASE_INTEGRATION.md)** - Detailed Firebase setup and integration guide
+- **[FIREBASE_TROUBLESHOOTING.md](FIREBASE_TROUBLESHOOTING.md)** - Common Firebase issues and solutions
 - **[QUICKSTART.md](QUICKSTART.md)** - Quick start guide for getting up and running
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture overview
 

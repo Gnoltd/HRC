@@ -1,0 +1,28 @@
+[Unit]
+Description=Education Projects Platform
+After=network.target
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/education-platform
+Environment="PATH=/var/www/education-platform/venv/bin"
+Environment="FLASK_DEBUG=False"
+Environment="FLASK_ENV=production"
+
+# Start with Gunicorn
+ExecStart=/var/www/education-platform/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 0.0.0.0:5000 \
+    --timeout 60 \
+    --access-logfile /var/log/education-platform/access.log \
+    --error-logfile /var/log/education-platform/error.log \
+    app:app
+
+# Restart on failure
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
