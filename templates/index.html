@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Education Projects Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Education Projects</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/projects">Projects</a></li>
+                <li><a href="/submit">Submit Project</a></li>
+                <li><a href="/admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Education Projects Platform</h1>
+            <p>Discover and share educational research opportunities and projects</p>
+            <a href="/projects" class="btn btn-primary">Browse Projects</a>
+            <a href="/submit" class="btn btn-secondary">Submit a Project</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Platform Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Research Opportunities</h3>
+                    <p>Explore diverse educational research projects and opportunities</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Easy Submission</h3>
+                    <p>Submit your projects with a simple and intuitive interface</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Real-time Updates</h3>
+                    <p>Get instant updates on new projects and applications</p>
+                </div>
+                <div class="feature-card">
+                    <h3>Secure Platform</h3>
+                    <p>Built with Firebase for reliable and secure data management</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Education Projects Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

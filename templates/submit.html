@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Project - Education Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Education Projects</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/projects">Projects</a></li>
+                <li><a href="/submit" class="active">Submit Project</a></li>
+                <li><a href="/admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="submit-section">
+        <div class="container">
+            <h1>Submit a New Project</h1>
+            
+            {% if message %}
+            <div class="alert alert-{{ message_type }}">
+                {{ message }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/submit" class="project-form">
+                <div class="form-group">
+                    <label for="title">Project Title *</label>
+                    <input type="text" id="title" name="title" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" required class="form-input">
+                        <option value="">Select a category</option>
+                        <option value="Science">Science</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Arts">Arts</option>
+                        <option value="Social Sciences">Social Sciences</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" required class="form-input" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="supervisor">Supervisor Name *</label>
+                    <input type="text" id="supervisor" name="supervisor" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Project Duration</label>
+                    <input type="text" id="duration" name="duration" placeholder="e.g., 3 months" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="deadline">Application Deadline *</label>
+                    <input type="date" id="deadline" name="deadline" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="requirements">Requirements</label>
+                    <textarea id="requirements" name="requirements" class="form-input" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Information *</label>
+                    <input type="text" id="contact" name="contact" required class="form-input" placeholder="Email or phone">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit Project</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Education Projects Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
