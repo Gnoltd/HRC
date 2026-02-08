@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Setup - Education Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <!-- Firebase Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics-compat.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>Education Projects</h1>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/">Home</a></li>
+                <li><a href="/projects">Projects</a></li>
+                <li><a href="/submit">Submit Project</a></li>
+                <li><a href="/admin">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="submit-section">
+        <div class="container">
+            <h1>🔧 Firebase Setup Guide</h1>
+            
+            <div class="setup-status">
+                <h2>Current Setup Status</h2>
+                <div class="status-card {% if db_configured %}status-success{% else %}status-error{% endif %}">
+                    <h3>{% if db_configured %}✅{% else %}❌{% endif %} Database Connection</h3>
+                    <p>
+                        {% if db_configured %}
+                            Firebase credentials are configured and database connection is established.
+                        {% else %}
+                            Firebase database is not configured or not accessible.
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            {% if not db_configured %}
+            <div class="setup-instructions">
+                <h2>📋 Setup Checklist</h2>
+                
+                <div class="checklist-item">
+                    <h3>Step 1: Create Firestore Database</h3>
+                    <p>The Firestore database needs to be created in your Firebase Console.</p>
+                    <ol>
+                        <li>Visit: <a href="https://console.cloud.google.com/datastore/setup?project=hsbresearchprj" target="_blank" rel="noopener">Firebase Console - Datastore Setup</a></li>
+                        <li>Click <strong>"Select Firestore"</strong> or <strong>"Create Database"</strong></li>
+                        <li>Choose <strong>"Firestore Native Mode"</strong></li>
+                        <li>Select a location (e.g., <code>us-central1</code> or nearest to you)</li>
+                        <li>Click <strong>"Create Database"</strong></li>
+                    </ol>
+                    <p class="note">⏱️ This usually takes 1-2 minutes to complete.</p>
+                </div>
+
+                <div class="checklist-item">
+                    <h3>Step 2: Configure Security Rules</h3>
+                    <p>Set up Firestore security rules to allow read and write operations.</p>
+                    <ol>
+                        <li>In Firebase Console, go to <strong>Firestore Database → Rules</strong></li>
+                        <li>Replace the existing rules with:</li>
+                    </ol>
+                    <pre><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /projects/{project} {
+      allow read, write: if true;  // For development only
+    }
+  }
+}</code></pre>
+                    <ol start="3">
+                        <li>Click <strong>"Publish"</strong></li>
+                    </ol>
+                    <p class="warning">⚠️ <strong>Important:</strong> These rules allow anyone to read/write. For production, implement proper authentication.</p>
+                </div>
+
+                <div class="checklist-item">
+                    <h3>Step 3: Download Service Account Credentials</h3>
+                    <p>Download the Firebase Admin SDK credentials for backend operations.</p>
+                    <ol>
+                        <li>Go to <strong>Project Settings → Service Accounts</strong></li>
+                        <li>Click <strong>"Generate New Private Key"</strong></li>
+                        <li>Save the downloaded JSON file as <code>firebase_credentials.json</code></li>
+                        <li>Place it in the project root directory (same folder as <code>app.py</code>)</li>
+                        <li>Restart the Flask application</li>
+                    </ol>
+                </div>
+
+                <div class="checklist-item">
+                    <h3>Step 4: Verify Setup</h3>
+                    <p>After completing the steps above:</p>
+                    <ol>
+                        <li>Restart the Flask application</li>
+                        <li>Refresh this page to check the connection status</li>
+                        <li>Try submitting a test project from the <a href="/submit">Submit Project</a> page</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="help-section">
+                <h2>📚 Additional Resources</h2>
+                <ul>
+                    <li><a href="{{ url_for('static', filename='../FIREBASE_TROUBLESHOOTING.md') }}" target="_blank">Detailed Troubleshooting Guide</a></li>
+                    <li><a href="{{ url_for('static', filename='../FIREBASE_INTEGRATION.md') }}" target="_blank">Firebase Integration Documentation</a></li>
+                    <li><a href="https://firebase.google.com/docs/firestore/quickstart" target="_blank" rel="noopener">Firebase Firestore Documentation</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <div class="success-message">
+                <h2>🎉 Setup Complete!</h2>
+                <p>Your Firebase database is configured and ready to use.</p>
+                <p><a href="/submit" class="btn btn-primary">Go to Submit Project</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Education Projects Platform. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase Configuration -->
+    <script src="{{ url_for('static', filename='js/firebase-config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -89,7 +89,7 @@ def submit():
     if request.method == 'POST':
         if db is None:
             return render_template('submit.html', 
-                                 message='Database not configured. Please contact the administrator to set up Firebase credentials.', 
+                                 message='Database not configured. Please <a href="/setup">visit the setup page</a> to configure Firebase.', 
                                  message_type='error')
         
         try:
@@ -123,21 +123,26 @@ def submit():
             error_msg = str(e)
             print(f"Error submitting project: {error_msg}")
             
-            # Provide more specific error messages
+            # Provide more specific error messages with setup link
             if 'PERMISSION_DENIED' in error_msg or 'permission' in error_msg.lower():
                 return render_template('submit.html', 
-                                     message='Permission denied. Please check Firestore security rules.', 
+                                     message='Permission denied. Please check Firestore security rules. <a href="/setup">Visit setup page</a> for help.', 
                                      message_type='error')
-            elif 'NOT_FOUND' in error_msg or 'not found' in error_msg.lower():
+            elif 'NOT_FOUND' in error_msg or 'not found' in error_msg.lower() or 'does not exist' in error_msg.lower():
                 return render_template('submit.html', 
-                                     message='Database not found. Please ensure Firestore is enabled in Firebase Console.', 
+                                     message='Database not found. The Firestore database needs to be created. <a href="/setup">Visit setup page</a> for step-by-step instructions.', 
                                      message_type='error')
             else:
                 return render_template('submit.html', 
-                                     message=f'Error submitting project: {error_msg}. Please try again or contact support.', 
+                                     message=f'Error submitting project: {error_msg}. <a href="/setup">Visit setup page</a> for troubleshooting help.', 
                                      message_type='error')
     
     return render_template('submit.html')
+
+@app.route('/setup')
+def setup():
+    """Firebase setup and status page"""
+    return render_template('setup.html', db_configured=(db is not None))
 
 @app.route('/admin')
 def admin():
