@@ -133,7 +133,7 @@ async function renderPendingTable() {
   if (!tbody) return;
 
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem">🎉 No pending submissions</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem">No pending submissions</td></tr>`;
     return;
   }
   tbody.innerHTML = list.map(p => `
@@ -144,9 +144,9 @@ async function renderPendingTable() {
       <td>${p.supervisor}</td>
       <td>${formatDate(p.submittedAt)}</td>
       <td class="actions">
-        <a href="review.html?id=${p.id}" class="btn btn-primary btn-sm">📋 Review</a>
-        <button class="btn btn-success btn-sm" onclick="quickApprove('${p.id}')">✔ Approve</button>
-        <button class="btn btn-danger btn-sm"  onclick="quickReject('${p.id}')">✖ Reject</button>
+        <a href="review.html?id=${p.id}" class="btn btn-primary btn-sm">Review</a>
+        <button class="btn btn-success btn-sm" onclick="quickApprove('${p.id}')">Approve</button>
+        <button class="btn btn-danger btn-sm"  onclick="quickReject('${p.id}')">Reject</button>
       </td>
     </tr>`).join('');
 }
@@ -221,10 +221,10 @@ async function renderAllTable() {
       <td><span class="badge ${p.status === 'approved' ? 'badge-success' : p.status === 'rejected' ? 'badge-danger' : 'badge-warning'}">${p.status}</span></td>
       <td>${formatDate(p.submittedAt)}</td>
       <td class="actions">
-        <a href="review.html?id=${p.id}" class="btn btn-outline btn-sm">📋 Detail</a>
-        ${p.status === 'pending'  ? `<button class="btn btn-success btn-sm" onclick="adminApprove('${p.id}')">✔ Approve</button>` : ''}
+        <a href="review.html?id=${p.id}" class="btn btn-outline btn-sm">Detail</a>
+        ${p.status === 'pending'  ? `<button class="btn btn-success btn-sm" onclick="adminApprove('${p.id}')">Approve</button>` : ''}
         ${p.status === 'approved' ? `<button class="btn btn-danger btn-sm"  onclick="adminRejectFrom('${p.id}')">Revoke</button>` : ''}
-        <button class="btn btn-danger btn-sm" onclick="adminDelete('${p.id}')">🗑 Delete</button>
+        <button class="btn btn-danger btn-sm" onclick="adminDelete('${p.id}')">Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -278,13 +278,13 @@ function renderReviewDetail(p) {
       </div>
       <h1>${p.title}</h1>
       <div class="meta-row">
-        <span>🏫 ${p.department}</span>
-        <span>👤 ${p.supervisor}</span>
-        <span>✉️ <a href="mailto:${p.email}">${p.email}</a></span>
-        <span>⏱ ${p.duration}</span>
-        <span>👥 ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
-        <span>📅 Submitted ${formatDateTime(p.submittedAt)}</span>
-        ${p.reviewedAt ? `<span>🔍 Reviewed ${formatDateTime(p.reviewedAt)}</span>` : ''}
+        <span>${p.department}</span>
+        <span>${p.supervisor}</span>
+        <span><a href="mailto:${p.email}">${p.email}</a></span>
+        <span>${p.duration}</span>
+        <span>${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
+        <span>Submitted ${formatDateTime(p.submittedAt)}</span>
+        ${p.reviewedAt ? `<span>Reviewed ${formatDateTime(p.reviewedAt)}</span>` : ''}
       </div>
       <div class="card-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
     </div>
@@ -304,7 +304,7 @@ function renderReviewDetail(p) {
     ${p.fileName ? `
     <div class="section-block">
       <h2>Attached File</h2>
-      <p>📎 <a href="${p.fileUrl}" download="${p.fileName}">${p.fileName}</a></p>
+      <p><a href="${p.fileUrl}" download="${p.fileName}">${p.fileName}</a></p>
     </div>` : ''}
     ${p.reviewNote ? `
     <div class="alert alert-warning mt-2">
@@ -319,7 +319,7 @@ function setupReviewActions(p) {
   const noteEl     = document.getElementById('review-note');
 
   if (approveBtn) {
-    if (p.status === 'approved') { approveBtn.disabled = true; approveBtn.textContent = '✔ Already Approved'; }
+    if (p.status === 'approved') { approveBtn.disabled = true; approveBtn.textContent = 'Already Approved'; }
     approveBtn.addEventListener('click', async () => {
       p.status = 'approved';
       p.reviewedAt = new Date().toISOString();
@@ -331,7 +331,7 @@ function setupReviewActions(p) {
   }
 
   if (rejectBtn) {
-    if (p.status === 'rejected') { rejectBtn.disabled = true; rejectBtn.textContent = '✖ Already Rejected'; }
+    if (p.status === 'rejected') { rejectBtn.disabled = true; rejectBtn.textContent = 'Already Rejected'; }
     rejectBtn.addEventListener('click', async () => {
       const note = noteEl?.value?.trim() || '';
       if (!note && !confirm('Reject without a note?')) return;

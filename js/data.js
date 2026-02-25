@@ -98,7 +98,7 @@ function showToast(msg, type = 'default', duration = 3000) {
     container.id = 'toast-container';
     document.body.appendChild(container);
   }
-  const icons = { success, error: , warning: , default: 'ℹ️' };
+  const icons = { success, error: , warning: , default: '' };
   const t = document.createElement('div');
   t.className = `toast ${type}`;
   t.innerHTML = `<span>${icons[type] || icons.default}</span> ${msg}`;

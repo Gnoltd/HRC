@@ -10,7 +10,7 @@
 
   <nav class="navbar">
     <a class="navbar-brand" href="../index.html">
-      <div class="logo-icon">🔬</div>
+      <div class="logo-icon"></div>
       ResearchHub
     </a>
     <ul class="navbar-nav">
@@ -21,13 +21,13 @@
 
   <div class="admin-layout">
     <aside class="admin-sidebar">
-      <div class="sidebar-logo">⚙️ Admin Panel</div>
+      <div class="sidebar-logo">Admin Panel</div>
       <ul class="sidebar-menu">
-        <li><a href="dashboard.html">🏠 Dashboard</a></li>
-        <li><a href="pending.html" class="active">📋 Pending Review</a></li>
-        <li><a href="all-projects.html">📂 All Projects</a></li>
-        <li><a href="../index.html" target="_blank">🌐 Public Site</a></li>
-        <li><a href="login.html" onclick="adminLogout()">🚪 Logout</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="pending.html" class="active">Pending Review</a></li>
+        <li><a href="all-projects.html">All Projects</a></li>
+        <li><a href="../index.html" target="_blank">Public Site</a></li>
+        <li><a href="login.html" onclick="adminLogout()">Logout</a></li>
       </ul>
     </aside>
 
@@ -47,14 +47,14 @@
         <!-- Left: project content -->
         <div>
           <div id="review-content">
-            <div class="empty-state"><div class="icon">⏳</div><h3>Loading…</h3></div>
+            <div class="empty-state"><div class="icon"></div><h3>Loading…</h3></div>
           </div>
         </div>
 
         <!-- Right: action panel -->
         <aside>
           <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:1.4rem; box-shadow:var(--shadow); position:sticky; top:80px;">
-            <h3 style="margin-bottom:1rem; font-size:1rem; border-bottom:2px solid var(--accent); padding-bottom:.4rem;">🔍 Review Actions</h3>
+            <h3 style="margin-bottom:1rem; font-size:1rem; border-bottom:2px solid var(--accent); padding-bottom:.4rem;">Review Actions</h3>
 
             <div class="form-group">
               <label for="review-note">Review Note (optional)</label>
@@ -62,15 +62,15 @@
             </div>
 
             <div style="display:flex; flex-direction:column; gap:.6rem;">
-              <button id="btn-approve" class="btn btn-success">✔ Approve & Publish</button>
-              <button id="btn-reject"  class="btn btn-danger">✖ Reject Submission</button>
+              <button id="btn-approve" class="btn btn-success">Approve & Publish</button>
+              <button id="btn-reject"  class="btn btn-danger">Reject Submission</button>
               <hr style="border:none; border-top:1px solid var(--border); margin:.2rem 0;" />
-              <button id="btn-delete"  class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);">🗑 Delete Permanently</button>
+              <button id="btn-delete"  class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);">Delete Permanently</button>
               <a href="pending.html" class="btn btn-outline" style="text-align:center;">← Back to List</a>
             </div>
 
             <div class="alert alert-info mt-2" style="font-size:.82rem;">
-              <span>ℹ️</span>
+              <span></span>
               <div>Approving will make this project <strong>publicly visible</strong>. Rejecting will hide it from the public listing.</div>
             </div>
           </div>
