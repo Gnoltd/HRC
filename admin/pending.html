@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pending Review — ResearchHub Admin</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body data-page="admin-pending">
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="../index.html">
+      <div class="logo-icon">🔬</div>
+      ResearchHub
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="../index.html">Public Site ↗</a></li>
+      <li><button class="btn btn-danger btn-sm" onclick="handleLogout()">Logout</button></li>
+    </ul>
+  </nav>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo">⚙️ Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="dashboard.html">🏠 Dashboard</a></li>
+        <li><a href="pending.html" class="active">📋 Pending Review</a></li>
+        <li><a href="all-projects.html">📂 All Projects</a></li>
+        <li><a href="../index.html" target="_blank">🌐 Public Site</a></li>
+        <li><a href="login.html" onclick="adminLogout()">🚪 Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-content">
+      <div class="flex justify-between align-center mb-2">
+        <h1 style="margin-bottom:0">📋 Pending Review <span id="pending-count" style="font-size:1rem; color:var(--muted); font-weight:400"></span></h1>
+        <a href="dashboard.html" class="btn btn-outline btn-sm">← Dashboard</a>
+      </div>
+
+      <div class="alert alert-info mb-2">
+        <span>ℹ️</span>
+        <div>Review each project submission below. Click <strong>Review</strong> for the full detail view, or use quick actions to approve or reject directly.</div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Project Title</th>
+              <th>Category</th>
+              <th>Supervisor</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-full-tbody">
+            <tr><td colspan="5" class="text-center text-muted" style="padding:2rem">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="../js/data.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

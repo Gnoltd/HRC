@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Detail — ResearchHub</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="detail">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="logo-icon">🔬</div>
+      ResearchHub
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="index.html">Projects</a></li>
+      <li><a href="submit.html">Submit Project</a></li>
+      <li><a href="admin/login.html" id="nav-admin-link" class="btn btn-accent btn-sm">Admin Login</a></li>
+    </ul>
+  </nav>
+
+  <main class="container section">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="sep">›</span>
+      <a href="index.html">Projects</a>
+      <span class="sep">›</span>
+      <span id="breadcrumb-title">Project Detail</span>
+    </nav>
+
+    <!-- Detail Layout -->
+    <div class="detail-layout">
+      <!-- Main Content -->
+      <div class="detail-main" id="project-content">
+        <div class="empty-state">
+          <div class="icon">⏳</div>
+          <h3>Loading project…</h3>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="detail-sidebar">
+        <div class="card">
+          <h3>Related Projects</h3>
+          <div id="related-projects">
+            <p style="font-size:.85rem;color:var(--muted)">Loading…</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📤 Submit Your Project</h3>
+          <p style="font-size:.87rem; color:var(--muted); margin-bottom:.8rem">
+            Have a research idea? Submit it for review and publication.
+          </p>
+          <a href="submit.html" class="btn btn-primary btn-block">Submit a Project</a>
+        </div>
+
+        <div class="card" style="background:var(--primary); color:#fff; border:none">
+          <h3 style="border-color:var(--accent); color:#fff">📬 Contact</h3>
+          <p style="font-size:.87rem; opacity:.85; margin-bottom:.8rem">
+            Interested in this project? Reach out to the supervisor directly.
+          </p>
+          <p style="font-size:.85rem; opacity:.9;" id="contact-hint">
+            Check the supervisor's email in the project details above.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 ResearchHub — Research Projects Portal</p>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
