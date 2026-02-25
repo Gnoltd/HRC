@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Submit a Project — ResearchHub</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="submit">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="logo-icon">🔬</div>
+      ResearchHub
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="index.html">Projects</a></li>
+      <li><a href="submit.html" class="active">Submit Project</a></li>
+      <li><a href="admin/login.html" id="nav-admin-link" class="btn btn-accent btn-sm">Admin Login</a></li>
+    </ul>
+  </nav>
+
+  <main class="container section">
+
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="sep">›</span>
+      <span>Submit a Project</span>
+    </nav>
+
+    <!-- SUCCESS SCREEN (hidden by default) -->
+    <div id="success-screen" class="hidden" style="max-width:560px; margin:4rem auto; text-align:center;">
+      <div style="font-size:4rem; margin-bottom:1rem;">🎉</div>
+      <h2 style="margin-bottom:.5rem;">Project Submitted!</h2>
+      <p style="color:var(--muted); margin-bottom:1.5rem;">
+        Thank you for your submission. An administrator will review your project and publish it once approved.
+        You'll be notified via the email you provided.
+      </p>
+      <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+        <a href="index.html"   class="btn btn-primary">Browse Projects</a>
+        <a href="submit.html"  class="btn btn-outline" onclick="location.reload(); return false;">Submit Another</a>
+      </div>
+    </div>
+
+    <!-- FORM WRAP -->
+    <div id="form-wrap">
+      <div style="max-width:760px; margin:0 auto;">
+
+        <div class="mb-2">
+          <h1 style="margin-bottom:.3rem;">📤 Submit a Research Project</h1>
+          <p class="text-muted">Fill in the details below. Your project will be reviewed by an administrator before being published.</p>
+        </div>
+
+        <div class="alert alert-info">
+          <span>ℹ️</span>
+          <div>All submitted projects are <strong>reviewed by admins</strong> before appearing publicly. Fields marked <span style="color:var(--danger)">*</span> are required.</div>
+        </div>
+
+        <form id="submit-form" novalidate style="background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:2rem; box-shadow:var(--shadow)">
+
+          <!-- Project Info -->
+          <h2 style="font-size:1.05rem; margin-bottom:1.2rem; padding-bottom:.4rem; border-bottom:2px solid var(--accent); display:inline-block;">Project Information</h2>
+
+          <div class="form-group">
+            <label for="proj-title">Project Title <span class="required">*</span></label>
+            <input type="text" id="proj-title" class="form-control" placeholder="e.g. AI-Based Early Cancer Detection Using MRI Imaging" maxlength="200" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="proj-category">Category <span class="required">*</span></label>
+              <select id="proj-category" class="form-control" required>
+                <option value="">— Select category —</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="proj-dept">Department <span class="required">*</span></label>
+              <select id="proj-dept" class="form-control" required>
+                <option value="">— Select department —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="proj-duration">Duration</label>
+              <input type="text" id="proj-duration" class="form-control" placeholder="e.g. 6 months" />
+            </div>
+            <div class="form-group">
+              <label for="proj-slots">Available Slots</label>
+              <input type="number" id="proj-slots" class="form-control" min="1" max="20" value="2" />
+            </div>
+          </div>
+
+          <!-- Supervisor Info -->
+          <h2 style="font-size:1.05rem; margin:1.5rem 0 1.2rem; padding-bottom:.4rem; border-bottom:2px solid var(--accent); display:inline-block;">Supervisor / Contact</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="proj-supervisor">Supervisor Name <span class="required">*</span></label>
+              <input type="text" id="proj-supervisor" class="form-control" placeholder="Prof. / Dr. Full Name" required />
+            </div>
+            <div class="form-group">
+              <label for="proj-email">Contact Email <span class="required">*</span></label>
+              <input type="email" id="proj-email" class="form-control" placeholder="you@university.edu" required />
+            </div>
+          </div>
+
+          <!-- Content -->
+          <h2 style="font-size:1.05rem; margin:1.5rem 0 1.2rem; padding-bottom:.4rem; border-bottom:2px solid var(--accent); display:inline-block;">Project Details</h2>
+
+          <div class="form-group">
+            <label for="proj-desc">Project Description <span class="required">*</span></label>
+            <textarea id="proj-desc" class="form-control" rows="5" placeholder="Describe the background, goals, and methodology of the research…" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="proj-requirements">Student Requirements</label>
+            <textarea id="proj-requirements" class="form-control" rows="3" placeholder="Skills, prerequisites, or prior knowledge required…"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="proj-outcomes">Expected Outcomes</label>
+            <textarea id="proj-outcomes" class="form-control" rows="3" placeholder="What will students produce or achieve…"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="proj-tags">Tags <span style="font-weight:400;color:var(--muted)">(comma-separated)</span></label>
+            <input type="text" id="proj-tags" class="form-control" placeholder="e.g. Machine Learning, Python, Climate" />
+            <div class="form-hint">Up to 8 tags help others discover your project.</div>
+          </div>
+
+          <!-- File Upload -->
+          <h2 style="font-size:1.05rem; margin:1.5rem 0 1.2rem; padding-bottom:.4rem; border-bottom:2px solid var(--accent); display:inline-block;">Attachments <span style="font-weight:400; font-size:.85rem;">(optional)</span></h2>
+
+          <div class="form-group">
+            <div class="file-drop" id="file-drop" role="button" tabindex="0" aria-label="Click or drag files to upload">
+              <input type="file" id="file-input" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt" multiple />
+              <div class="icon">📎</div>
+              <p><strong>Click to browse</strong> or drag & drop files here</p>
+              <p>PDF, DOC, DOCX, PPT, PPTX, TXT — max 10 MB each, up to 3 files</p>
+            </div>
+            <ul class="file-list" id="file-list"></ul>
+          </div>
+
+          <!-- Agreement -->
+          <div class="form-group" style="background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius); padding:1rem; margin-top:1rem;">
+            <label style="display:flex; gap:.6rem; align-items:flex-start; font-weight:400; cursor:pointer;">
+              <input type="checkbox" id="agree" style="margin-top:.2rem;" />
+              <span>I confirm that the information submitted is accurate and that I have the right to publish this project. I agree that the content will be reviewed and may be rejected.</span>
+            </label>
+          </div>
+
+          <div style="display:flex; gap:1rem; margin-top:1.5rem; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary btn-lg">📤 Submit for Review</button>
+            <a href="index.html" class="btn btn-outline btn-lg">Cancel</a>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 ResearchHub — Research Projects Portal</p>
+  </footer>
+
+  <div id="toast-container"></div>
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

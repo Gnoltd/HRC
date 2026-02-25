@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Projects Portal</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body data-page="index">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      <div class="logo-icon">🔬</div>
+      ResearchHub
+    </a>
+    <ul class="navbar-nav">
+      <li><a href="index.html" class="active">Projects</a></li>
+      <li><a href="submit.html">Submit Project</a></li>
+      <li><a href="admin/login.html" id="nav-admin-link" class="btn btn-accent btn-sm">Admin Login</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Research Projects Portal</h1>
+    <p>Discover, explore, and connect with cutting-edge research opportunities across all disciplines.</p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-accent btn-lg">🔍 Browse Projects</a>
+      <a href="submit.html"  class="btn btn-outline btn-lg" style="color:#fff;border-color:#fff">📤 Submit a Project</a>
+    </div>
+  </section>
+
+  <!-- Stats Banner -->
+  <div style="background:var(--primary-light); color:#fff; padding:.6rem 2rem;">
+    <div class="container">
+      <div class="stats-bar" id="stats-banner" style="color:#fff">
+        <span>Loading stats…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <main class="container section" id="projects">
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="filter-group" style="flex:2 1 260px">
+        <label for="search">Search</label>
+        <input type="text" id="search" class="form-control" placeholder="Keywords, supervisor name, tags…" />
+      </div>
+      <div class="filter-group">
+        <label for="cat-filter">Category</label>
+        <select id="cat-filter" class="form-control">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="dept-filter">Department</label>
+        <select id="dept-filter" class="form-control">
+          <option value="">All Departments</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-filter">Sort By</label>
+        <select id="sort-filter" class="form-control">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="downloads">Most Downloaded</option>
+          <option value="title">Title A–Z</option>
+        </select>
+      </div>
+      <button class="btn btn-outline" id="reset-filters">Reset</button>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-bar">
+      <span class="count" id="result-count">Loading…</span>
+    </div>
+
+    <!-- Project Grid -->
+    <div class="project-grid" id="project-grid">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+  </main>
+
+  <!-- CTA Banner -->
+  <section style="background:var(--primary); color:#fff; padding:2.5rem 2rem; text-align:center;">
+    <div class="container">
+      <h2 style="margin-bottom:.5rem;">Have a research project to share?</h2>
+      <p style="opacity:.85; margin-bottom:1.2rem;">Submit your project for review and let students discover your work.</p>
+      <a href="submit.html" class="btn btn-accent btn-lg">📤 Submit a Project</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>&copy; 2026 ResearchHub — Research Projects Portal &nbsp;|&nbsp;
+      <a href="admin/login.html">Admin</a>
+    </p>
+  </footer>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
