@@ -2,11 +2,10 @@
    main.js — Guest-side logic (index + detail + submit)
    ===================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-  initDB();
+document.addEventListener('DOMContentLoaded', async () => {
   const page = document.body.dataset.page;
-  if (page === 'index')   initIndexPage();
-  if (page === 'detail')  initDetailPage();
+  if (page === 'index')   await initIndexPage();
+  if (page === 'detail')  await initDetailPage();
   if (page === 'submit')  initSubmitPage();
   updateNavAuthLink();
 });
@@ -28,9 +27,9 @@ const ITEMS_PER_PAGE = 9;
 let currentPage = 1;
 let filteredProjects = [];
 
-function initIndexPage() {
+async function initIndexPage() {
   renderFilters();
-  loadProjects();
+  await loadProjects();
 
   const searchEl  = document.getElementById('search');
   const catEl     = document.getElementById('cat-filter');
@@ -58,8 +57,8 @@ function renderFilters() {
   }
 }
 
-function loadProjects() {
-  const projects = getApprovedProjects();
+async function loadProjects() {
+  const projects = await getApprovedProjects();
   const search   = (document.getElementById('search')?.value || '').toLowerCase().trim();
   const cat      = document.getElementById('cat-filter')?.value  || '';
   const dept     = document.getElementById('dept-filter')?.value || '';
@@ -161,8 +160,8 @@ function resetFilters() {
   loadProjects();
 }
 
-function renderStatsBanner() {
-  const all      = getApprovedProjects();
+async function renderStatsBanner() {
+  const all      = await getApprovedProjects();
   const cats     = [...new Set(all.map(p => p.category))].length;
   const el = document.getElementById('stats-banner');
   if (!el) return;
@@ -173,8 +172,8 @@ function renderStatsBanner() {
 }
 
 /* ---- Download handler ---- */
-function handleDownload(id) {
-  const p = getProjectById(id);
+async function handleDownload(id) {
+  const p = await getProjectById(id);
   if (!p) return;
 
   if (p.fileUrl) {
@@ -194,7 +193,7 @@ function handleDownload(id) {
   }
 
   p.downloads++;
-  saveProject(p);
+  await saveProject(p);
   showToast('Project downloaded successfully!', 'success');
 }
 
@@ -229,12 +228,12 @@ ${p.outcomes}
 /* ===================================================
    DETAIL PAGE
    =================================================== */
-function initDetailPage() {
+async function initDetailPage() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) { window.location.href = 'index.html'; return; }
 
-  const p = getProjectById(id);
+  const p = await getProjectById(id);
   if (!p || p.status !== 'approved') {
     document.getElementById('project-content').innerHTML = `
       <div class="empty-state">
@@ -286,7 +285,7 @@ function initDetailPage() {
     </div>`;
 
   // Related projects sidebar
-  const related = getApprovedProjects().filter(r => r.id !== p.id && r.category === p.category).slice(0, 3);
+  const related = (await getApprovedProjects()).filter(r => r.id !== p.id && r.category === p.category).slice(0, 3);
   const relEl = document.getElementById('related-projects');
   if (relEl) {
     if (related.length) {
@@ -354,7 +353,7 @@ function setupFileDrop() {
   window.removeFile = (i) => { selectedFiles.splice(i, 1); renderFileList(); };
 }
 
-function handleSubmitProject(e) {
+async function handleSubmitProject(e) {
   e.preventDefault();
   const form = e.target;
   const submitBtn = form.querySelector('[type="submit"]');
@@ -385,21 +384,21 @@ function handleSubmitProject(e) {
     fileName = selectedFiles[0].name;
     // Read as dataURL for demo download
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = async (ev) => {
       fileUrl = ev.target.result;
-      persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName });
+      await persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName });
       showSuccessScreen();
     };
     reader.readAsDataURL(selectedFiles[0]);
     submitBtn.disabled = true;
   } else {
-    persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName });
+    await persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName });
     showSuccessScreen();
     submitBtn.disabled = true;
   }
 }
 
-function persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName }) {
+async function persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName }) {
   const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
   const project = {
     id: generateId(),
@@ -412,7 +411,7 @@ function persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, o
     reviewedAt: null, reviewNote: '',
     downloads: 0, fileUrl, fileName,
   };
-  saveProject(project);
+  await saveProject(project);
 }
 
 function showSuccessScreen() {

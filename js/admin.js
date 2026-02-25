@@ -2,14 +2,13 @@
    admin.js — Admin-side logic
    ===================================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-  initDB();
+document.addEventListener('DOMContentLoaded', async () => {
   const page = document.body.dataset.page;
   if (page === 'admin-login')     initLoginPage();
-  if (page === 'admin-dashboard') initDashboardPage();
-  if (page === 'admin-pending')   initPendingPage();
-  if (page === 'admin-all')       initAllProjectsPage();
-  if (page === 'admin-review')    initReviewPage();
+  if (page === 'admin-dashboard') await initDashboardPage();
+  if (page === 'admin-pending')   await initPendingPage();
+  if (page === 'admin-all')       await initAllProjectsPage();
+  if (page === 'admin-review')    await initReviewPage();
 });
 
 /* ===================================================
@@ -36,12 +35,12 @@ function initLoginPage() {
 /* ===================================================
    DASHBOARD PAGE
    =================================================== */
-function initDashboardPage() {
+async function initDashboardPage() {
   if (!requireAdmin()) return;
   renderAdminMeta();
-  renderDashboardStats();
-  renderRecentPending();
-  renderRecentApproved();
+  await renderDashboardStats();
+  await renderRecentPending();
+  await renderRecentApproved();
 }
 
 function renderAdminMeta() {
@@ -50,8 +49,8 @@ function renderAdminMeta() {
   if (el) el.textContent = info.user || 'Admin';
 }
 
-function renderDashboardStats() {
-  const all      = getAllProjects();
+async function renderDashboardStats() {
+  const all      = await getAllProjects();
   const pending  = all.filter(p => p.status === 'pending').length;
   const approved = all.filter(p => p.status === 'approved').length;
   const rejected = all.filter(p => p.status === 'rejected').length;
@@ -69,8 +68,8 @@ function setText(id, val) {
   if (el) el.textContent = val;
 }
 
-function renderRecentPending() {
-  const list = getPendingProjects().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 5);
+async function renderRecentPending() {
+  const list = (await getPendingProjects()).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt)).slice(0, 5);
   const tbody = document.getElementById('pending-tbody');
   if (!tbody) return;
   if (!list.length) {
@@ -89,8 +88,8 @@ function renderRecentPending() {
     </tr>`).join('');
 }
 
-function renderRecentApproved() {
-  const list = getApprovedProjects().sort((a, b) => new Date(b.reviewedAt||0) - new Date(a.reviewedAt||0)).slice(0, 5);
+async function renderRecentApproved() {
+  const list = (await getApprovedProjects()).sort((a, b) => new Date(b.reviewedAt||0) - new Date(a.reviewedAt||0)).slice(0, 5);
   const tbody = document.getElementById('approved-tbody');
   if (!tbody) return;
   if (!list.length) {
@@ -109,25 +108,25 @@ function renderRecentApproved() {
     </tr>`).join('');
 }
 
-function quickDelete(id) {
+async function quickDelete(id) {
   if (!confirm('Are you sure you want to delete this project? This cannot be undone.')) return;
-  deleteProject(id);
+  await deleteProject(id);
   showToast('Project deleted.', 'success');
-  renderDashboardStats();
-  renderRecentPending();
-  renderRecentApproved();
+  await renderDashboardStats();
+  await renderRecentPending();
+  await renderRecentApproved();
 }
 
 /* ===================================================
    PENDING PAGE
    =================================================== */
-function initPendingPage() {
+async function initPendingPage() {
   if (!requireAdmin()) return;
-  renderPendingTable();
+  await renderPendingTable();
 }
 
-function renderPendingTable() {
-  const list  = getPendingProjects().sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+async function renderPendingTable() {
+  const list  = (await getPendingProjects()).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
   const tbody = document.getElementById('pending-full-tbody');
   const count = document.getElementById('pending-count');
   if (count) count.textContent = list.length;
@@ -152,47 +151,47 @@ function renderPendingTable() {
     </tr>`).join('');
 }
 
-function quickApprove(id) {
-  const p = getProjectById(id);
+async function quickApprove(id) {
+  const p = await getProjectById(id);
   if (!p) return;
   p.status = 'approved';
   p.reviewedAt = new Date().toISOString();
-  saveProject(p);
+  await saveProject(p);
   showToast('Project approved!', 'success');
-  renderPendingTable();
+  await renderPendingTable();
 }
 
-function quickReject(id) {
+async function quickReject(id) {
   const note = prompt('Reason for rejection (optional):') || '';
-  const p = getProjectById(id);
+  const p = await getProjectById(id);
   if (!p) return;
   p.status = 'rejected';
   p.reviewedAt = new Date().toISOString();
   p.reviewNote = note;
-  saveProject(p);
+  await saveProject(p);
   showToast('Project rejected.', 'warning');
-  renderPendingTable();
+  await renderPendingTable();
 }
 
 /* ===================================================
    ALL PROJECTS PAGE
    =================================================== */
-function initAllProjectsPage() {
+async function initAllProjectsPage() {
   if (!requireAdmin()) return;
 
   const searchEl  = document.getElementById('admin-search');
   const statusEl  = document.getElementById('status-filter');
 
-  renderAllTable();
+  await renderAllTable();
 
   if (searchEl) searchEl.addEventListener('input', renderAllTable);
   if (statusEl) statusEl.addEventListener('change', renderAllTable);
 }
 
-function renderAllTable() {
+async function renderAllTable() {
   const search = (document.getElementById('admin-search')?.value || '').toLowerCase();
   const status = document.getElementById('status-filter')?.value || '';
-  let list = getAllProjects();
+  let list = await getAllProjects();
 
   if (search) list = list.filter(p =>
     p.title.toLowerCase().includes(search) ||
@@ -230,36 +229,36 @@ function renderAllTable() {
     </tr>`).join('');
 }
 
-function adminApprove(id) {
-  const p = getProjectById(id);
+async function adminApprove(id) {
+  const p = await getProjectById(id);
   if (!p) return;
   p.status = 'approved'; p.reviewedAt = new Date().toISOString();
-  saveProject(p); showToast('Approved!', 'success'); renderAllTable();
+  await saveProject(p); showToast('Approved!', 'success'); await renderAllTable();
 }
 
-function adminRejectFrom(id) {
+async function adminRejectFrom(id) {
   const note = prompt('Reason (optional):') || '';
-  const p = getProjectById(id);
+  const p = await getProjectById(id);
   if (!p) return;
   p.status = 'rejected'; p.reviewedAt = new Date().toISOString(); p.reviewNote = note;
-  saveProject(p); showToast('Revoked.', 'warning'); renderAllTable();
+  await saveProject(p); showToast('Revoked.', 'warning'); await renderAllTable();
 }
 
-function adminDelete(id) {
+async function adminDelete(id) {
   if (!confirm('Delete this project permanently?')) return;
-  deleteProject(id); showToast('Deleted.', 'success'); renderAllTable();
+  await deleteProject(id); showToast('Deleted.', 'success'); await renderAllTable();
 }
 
 /* ===================================================
    REVIEW PAGE
    =================================================== */
-function initReviewPage() {
+async function initReviewPage() {
   if (!requireAdmin()) return;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) { window.location.href = 'pending.html'; return; }
 
-  const p = getProjectById(id);
+  const p = await getProjectById(id);
   if (!p) { window.location.href = 'pending.html'; return; }
 
   renderReviewDetail(p);
@@ -321,11 +320,11 @@ function setupReviewActions(p) {
 
   if (approveBtn) {
     if (p.status === 'approved') { approveBtn.disabled = true; approveBtn.textContent = '✔ Already Approved'; }
-    approveBtn.addEventListener('click', () => {
+    approveBtn.addEventListener('click', async () => {
       p.status = 'approved';
       p.reviewedAt = new Date().toISOString();
       p.reviewNote = noteEl?.value?.trim() || '';
-      saveProject(p);
+      await saveProject(p);
       showToast('Project approved and published!', 'success');
       setTimeout(() => window.location.href = 'pending.html', 1200);
     });
@@ -333,22 +332,22 @@ function setupReviewActions(p) {
 
   if (rejectBtn) {
     if (p.status === 'rejected') { rejectBtn.disabled = true; rejectBtn.textContent = '✖ Already Rejected'; }
-    rejectBtn.addEventListener('click', () => {
+    rejectBtn.addEventListener('click', async () => {
       const note = noteEl?.value?.trim() || '';
       if (!note && !confirm('Reject without a note?')) return;
       p.status = 'rejected';
       p.reviewedAt = new Date().toISOString();
       p.reviewNote = note;
-      saveProject(p);
+      await saveProject(p);
       showToast('Project rejected.', 'warning');
       setTimeout(() => window.location.href = 'pending.html', 1200);
     });
   }
 
   if (deleteBtn) {
-    deleteBtn.addEventListener('click', () => {
+    deleteBtn.addEventListener('click', async () => {
       if (!confirm('Permanently delete this project?')) return;
-      deleteProject(p.id);
+      await deleteProject(p.id);
       showToast('Deleted.', 'success');
       setTimeout(() => window.location.href = 'all-projects.html', 1000);
     });
