@@ -54,7 +54,7 @@ async function renderDashboardStats() {
   const pending  = all.filter(p => p.status === 'pending').length;
   const approved = all.filter(p => p.status === 'approved').length;
   const rejected = all.filter(p => p.status === 'rejected').length;
-  const downloads= all.reduce((s, p) => s + p.downloads, 0);
+  const downloads= all.reduce((s, p) => s + (p.downloads || 0), 0);
 
   setText('stat-total',     all.length);
   setText('stat-pending',   pending);
@@ -286,7 +286,7 @@ function renderReviewDetail(p) {
         <span>📅 Submitted ${formatDateTime(p.submittedAt)}</span>
         ${p.reviewedAt ? `<span>🔍 Reviewed ${formatDateTime(p.reviewedAt)}</span>` : ''}
       </div>
-      <div class="card-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-tags">${(Array.isArray(p.tags) ? p.tags : []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
     </div>
 
     <div class="section-block">
