@@ -5,7 +5,10 @@
 const AUTH_KEY = 'rp_admin_auth';
 
 /* ---- CRUD (async) ---- */
+function dbError() { return new Error('Firebase is not initialized'); }
+
 async function getAllProjects() {
+  if (!db) { console.error('getAllProjects: Firebase is not initialized'); return []; }
   const snapshot = await db.ref('projects').once('value');
   const data = snapshot.val();
   if (!data) return [];
@@ -23,15 +26,18 @@ async function getPendingProjects() {
 }
 
 async function getProjectById(id) {
+  if (!db) { console.error('getProjectById: Firebase is not initialized'); return null; }
   const snapshot = await db.ref('projects/' + id).once('value');
   return snapshot.val();
 }
 
 async function saveProject(project) {
+  if (!db) throw dbError();
   await db.ref('projects/' + project.id).set(project);
 }
 
 async function deleteProject(id) {
+  if (!db) throw dbError();
   await db.ref('projects/' + id).remove();
 }
 
