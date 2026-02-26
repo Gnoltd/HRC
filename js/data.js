@@ -9,10 +9,15 @@ function dbError() { return new Error('Firebase is not initialized'); }
 
 async function getAllProjects() {
   if (!db) { console.error('getAllProjects: Firebase is not initialized'); return []; }
-  const snapshot = await db.ref('projects').once('value');
-  const data = snapshot.val();
-  if (!data) return [];
-  return Object.values(data);
+  try {
+    const snapshot = await db.ref('projects').once('value');
+    const data = snapshot.val();
+    if (!data) return [];
+    return Object.values(data);
+  } catch (err) {
+    console.error('getAllProjects: Firebase read failed —', err.message || err);
+    return [];
+  }
 }
 
 async function getApprovedProjects() {
@@ -27,8 +32,13 @@ async function getPendingProjects() {
 
 async function getProjectById(id) {
   if (!db) { console.error('getProjectById: Firebase is not initialized'); return null; }
-  const snapshot = await db.ref('projects/' + id).once('value');
-  return snapshot.val();
+  try {
+    const snapshot = await db.ref('projects/' + id).once('value');
+    return snapshot.val();
+  } catch (err) {
+    console.error('getProjectById: Firebase read failed —', err.message || err);
+    return null;
+  }
 }
 
 async function saveProject(project) {

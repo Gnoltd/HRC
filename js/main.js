@@ -58,18 +58,35 @@ function renderFilters() {
 }
 
 async function loadProjects() {
-  const projects = await getApprovedProjects();
+  const grid = document.getElementById('project-grid');
+  let projects = [];
+  try {
+    projects = await getApprovedProjects();
+  } catch (err) {
+    console.error('loadProjects: failed to fetch projects —', err);
+    if (grid) grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="icon">⚠️</div>
+        <h3>Unable to load projects</h3>
+        <p>Could not connect to the database. Please check your Firebase configuration or try again later.</p>
+      </div>`;
+    const countEl = document.getElementById('result-count');
+    if (countEl) countEl.textContent = '0 projects found';
+    return;
+  }
+
   const search   = (document.getElementById('search')?.value || '').toLowerCase().trim();
   const cat      = document.getElementById('cat-filter')?.value  || '';
   const dept     = document.getElementById('dept-filter')?.value || '';
   const sort     = document.getElementById('sort-filter')?.value || 'newest';
 
   filteredProjects = projects.filter(p => {
+    const tags = Array.isArray(p.tags) ? p.tags : [];
     const matchSearch = !search ||
-      p.title.toLowerCase().includes(search) ||
-      p.description.toLowerCase().includes(search) ||
-      p.supervisor.toLowerCase().includes(search) ||
-      p.tags.some(t => t.toLowerCase().includes(search));
+      (p.title || '').toLowerCase().includes(search) ||
+      (p.description || '').toLowerCase().includes(search) ||
+      (p.supervisor || '').toLowerCase().includes(search) ||
+      tags.some(t => t.toLowerCase().includes(search));
     const matchCat  = !cat  || p.category   === cat;
     const matchDept = !dept || p.department  === dept;
     return matchSearch && matchCat && matchDept;
@@ -108,7 +125,9 @@ function renderProjectCards() {
     return;
   }
 
-  grid.innerHTML = page.map(p => `
+  grid.innerHTML = page.map(p => {
+    const tags = Array.isArray(p.tags) ? p.tags : [];
+    return `
     <div class="project-card">
       <div class="card-header">
         <span class="card-category">${p.category}</span>
@@ -121,12 +140,13 @@ function renderProjectCards() {
         <span>👥 ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
       </div>
       <div class="card-desc">${p.description}</div>
-      <div class="card-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
       <div class="card-footer">
         <a href="project-detail.html?id=${p.id}" class="btn btn-outline btn-sm">View Details</a>
         <button class="btn btn-primary btn-sm" onclick="handleDownload('${p.id}')">⬇ Download</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderPagination() {
@@ -161,14 +181,18 @@ function resetFilters() {
 }
 
 async function renderStatsBanner() {
-  const all      = await getApprovedProjects();
-  const cats     = [...new Set(all.map(p => p.category))].length;
-  const el = document.getElementById('stats-banner');
-  if (!el) return;
-  el.innerHTML = `
-    <span>📋 <strong>${all.length}</strong> Active Projects</span>
-    <span>🏷 <strong>${cats}</strong> Categories</span>
-    <span>📥 <strong>${all.reduce((a, p) => a + p.downloads, 0)}</strong> Total Downloads</span>`;
+  try {
+    const all  = await getApprovedProjects();
+    const cats = [...new Set(all.map(p => p.category))].length;
+    const el = document.getElementById('stats-banner');
+    if (!el) return;
+    el.innerHTML = `
+      <span>📋 <strong>${all.length}</strong> Active Projects</span>
+      <span>🏷 <strong>${cats}</strong> Categories</span>
+      <span>📥 <strong>${all.reduce((a, p) => a + (p.downloads || 0), 0)}</strong> Total Downloads</span>`;
+  } catch (err) {
+    console.error('renderStatsBanner: failed —', err);
+  }
 }
 
 /* ---- Download handler ---- */
@@ -208,7 +232,7 @@ Supervisor:  ${p.supervisor}
 Contact:     ${p.email}
 Duration:    ${p.duration}
 Slots:       ${p.slots}
-Tags:        ${p.tags.join(', ')}
+Tags:        ${(Array.isArray(p.tags) ? p.tags : []).join(', ')}
 Date:        ${formatDate(p.submittedAt)}
 
 DESCRIPTION
@@ -261,7 +285,7 @@ async function initDetailPage() {
         <span>👥 ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
         <span>📅 Posted ${formatDate(p.submittedAt)}</span>
       </div>
-      <div class="card-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-tags">${(Array.isArray(p.tags) ? p.tags : []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
     </div>
 
     <div class="section-block">
