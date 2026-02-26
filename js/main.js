@@ -15,7 +15,7 @@ function updateNavAuthLink() {
   const el = document.getElementById('nav-admin-link');
   if (!el) return;
   if (isAdminLoggedIn()) {
-    el.textContent = '⚙️ Admin Panel';
+    el.textContent = 'Admin Panel';
     el.href = 'admin/dashboard.html';
   }
 }
@@ -66,7 +66,7 @@ async function loadProjects() {
     console.error('loadProjects: failed to fetch projects —', err);
     if (grid) grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
-        <div class="icon">⚠️</div>
+        <div class="icon"></div>
         <h3>Unable to load projects</h3>
         <p>Could not connect to the database. Please check your Firebase configuration or try again later.</p>
       </div>`;
@@ -134,10 +134,10 @@ function renderProjectCards() {
       </div>
       <div class="card-title"><a href="project-detail.html?id=${p.id}">${p.title}</a></div>
       <div class="card-meta">
-        <span>🏫 ${p.department}</span>
-        <span>👤 ${p.supervisor}</span>
-        <span>⏱ ${p.duration}</span>
-        <span>👥 ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
+        <span> ${p.department}</span>
+        <span> ${p.supervisor}</span>
+        <span> ${p.duration}</span>
+        <span> ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
       </div>
       <div class="card-desc">${p.description}</div>
       <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
@@ -187,9 +187,9 @@ async function renderStatsBanner() {
     const el = document.getElementById('stats-banner');
     if (!el) return;
     el.innerHTML = `
-      <span>📋 <strong>${all.length}</strong> Active Projects</span>
-      <span>🏷 <strong>${cats}</strong> Categories</span>
-      <span>📥 <strong>${all.reduce((a, p) => a + (p.downloads || 0), 0)}</strong> Total Downloads</span>`;
+      <span> <strong>${all.length}</strong> Active Projects</span>
+      <span> <strong>${cats}</strong> Categories</span>
+      <span> <strong>${all.reduce((a, p) => a + (p.downloads || 0), 0)}</strong> Total Downloads</span>`;
   } catch (err) {
     console.error('renderStatsBanner: failed —', err);
   }
@@ -261,7 +261,7 @@ async function initDetailPage() {
   if (!p || p.status !== 'approved') {
     document.getElementById('project-content').innerHTML = `
       <div class="empty-state">
-        <div class="icon">❌</div>
+        <div class="icon"></div>
         <h3>Project not found</h3>
         <p><a href="index.html">← Back to projects</a></p>
       </div>`;
@@ -279,11 +279,11 @@ async function initDetailPage() {
       </div>
       <h1>${p.title}</h1>
       <div class="meta-row">
-        <span>👤 <strong>${p.supervisor}</strong></span>
-        <span>✉️ <a href="mailto:${p.email}">${p.email}</a></span>
-        <span>⏱ ${p.duration}</span>
-        <span>👥 ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
-        <span>📅 Posted ${formatDate(p.submittedAt)}</span>
+        <span> <strong>${p.supervisor}</strong></span>
+        <span> <a href="mailto:${p.email}">${p.email}</a></span>
+        <span> ${p.duration}</span>
+        <span> ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
+        <span> Posted ${formatDate(p.submittedAt)}</span>
       </div>
       <div class="card-tags">${(Array.isArray(p.tags) ? p.tags : []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
     </div>
@@ -370,7 +370,7 @@ function setupFileDrop() {
     if (!listEl) return;
     listEl.innerHTML = selectedFiles.map((f, i) => `
       <li>
-        <span>📄 ${f.name} <span style="color:var(--muted)">(${(f.size/1024).toFixed(1)} KB)</span></span>
+        <span> ${f.name} <span style="color:var(--muted)">(${(f.size/1024).toFixed(1)} KB)</span></span>
         <button onclick="removeFile(${i})" title="Remove">✕</button>
       </li>`).join('');
   }
