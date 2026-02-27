@@ -163,6 +163,7 @@ h3 { font-size: 1.15rem; }
   box-shadow: var(--shadow);
 }
 .filter-group { display: flex; flex-direction: column; gap: .3rem; flex: 1 1 180px; }
+.filter-group-wide { flex: 2 1 260px; }
 .filter-group label { font-size: .82rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
 .filter-bar input,
 .filter-bar select {
@@ -657,6 +658,14 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   .data-table { font-size: .82rem; }
   .data-table th, .data-table td { padding: .6rem .75rem; }
 }
+
+/* ---------- Tablet (641px – 900px) ---------- */
+@media (min-width: 641px) and (max-width: 900px) {
+  .project-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-cards   { grid-template-columns: repeat(3, 1fr); }
+  .filter-bar   { gap: .75rem; }
+}
+
 @media (max-width: 640px) {
   .navbar { padding: 0 1rem; }
   .navbar-nav { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--primary); padding: 1rem; gap: .5rem; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
@@ -664,11 +673,35 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   .navbar-toggler { display: block; }
   .hero { padding: 2rem 1rem; }
   .hero h1 { font-size: 1.6rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { justify-content: center; }
   .project-grid { grid-template-columns: 1fr; }
-  .filter-bar { flex-direction: column; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-bar .btn { width: 100%; justify-content: center; }
+  /* In column layout, flex-basis acts as min-height; reset to natural height */
+  .filter-bar .filter-group, .filter-bar .filter-group-wide { flex: none; width: 100%; }
   .stat-cards { grid-template-columns: 1fr 1fr; }
   h1 { font-size: 1.5rem; }
   .login-card { padding: 1.5rem 1.2rem; }
   .modal { margin: 0 .5rem; }
   .table-wrap { overflow-x: auto; }
+  /* Prevent iOS Safari auto-zoom on focused inputs (requires font-size ≥ 16px) */
+  .form-control { font-size: 1rem; }
+  /* Toast: fill viewport width on small screens */
+  #toast-container { left: 1rem; right: 1rem; bottom: 1rem; }
+  .toast { min-width: unset; width: 100%; }
+  /* Stack card footer buttons */
+  .card-footer { flex-direction: column; }
+  .card-footer .btn { width: 100%; justify-content: center; }
+  /* Adequate touch targets for buttons */
+  .btn { min-height: 44px; }
+  .btn-sm { min-height: 38px; }
+  /* Tighten admin content padding */
+  .admin-content { padding: 1rem; }
+  /* Better spacing for admin mobile nav links */
+  .admin-mobile-nav a, .admin-mobile-nav button { min-height: 44px; display: inline-flex; align-items: center; }
+  /* Pagination: tighter on small screens */
+  .pagination button { padding: .4rem .65rem; font-size: .85rem; }
+  /* Prevent horizontal scroll on mobile */
+  body { overflow-x: hidden; }
 }
