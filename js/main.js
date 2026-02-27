@@ -17,7 +17,7 @@ function updateNavAuthLink() {
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      if (userEl)  { userEl.textContent  = 'Guest'; userEl.href  = 'login.html'; }
+      if (userEl)  { userEl.textContent  = 'Login'; userEl.href  = 'login.html'; }
       if (adminEl) { adminEl.textContent = 'Guest'; adminEl.href = 'login.html'; }
       return;
     }
