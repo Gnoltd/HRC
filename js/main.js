@@ -24,14 +24,15 @@ function updateNavAuthLink() {
   if (!userEl) return;
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      userEl.textContent = 'Sign In';
+      userEl.textContent = 'Guest';
       userEl.href = 'login.html';
       return;
     }
     try {
       const profile = await getUserProfile(user.uid);
       if (profile) {
-        userEl.textContent = profile.displayName || profile.email;
+        const label = profile.role === 'admin' ? 'Admin' : (profile.displayName || profile.email);
+        userEl.textContent = label;
         userEl.href = 'login.html';
       }
     } catch (_) {}
