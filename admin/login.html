@@ -20,17 +20,43 @@
         Invalid email or password. Please try again.
       </div>
 
-      <form id="login-form" novalidate>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" class="form-control" placeholder="admin@example.com" autocomplete="email" required />
+      <!-- Sign In Form -->
+      <div id="admin-login-section">
+        <form id="login-form" novalidate>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="admin@example.com" autocomplete="email" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:.5rem">Sign In</button>
+        </form>
+        <div style="text-align:center; margin-top:.8rem; font-size:.85rem;">
+          <button type="button" class="btn-link" onclick="showAdminForgot()">Forgot password?</button>
         </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
+      </div>
+
+      <!-- Forgot Password Section -->
+      <div id="admin-forgot-section" class="hidden">
+        <div style="text-align:center; margin-bottom:1rem;">
+          <h3 style="font-size:1rem; margin-bottom:.3rem;">Reset Password</h3>
+          <p style="color:var(--muted); font-size:.88rem;">Enter your admin email to receive a reset link.</p>
         </div>
-        <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:.5rem">Sign In</button>
-      </form>
+        <div id="forgot-error" class="alert alert-danger hidden"></div>
+        <div id="forgot-success" class="alert alert-success hidden"></div>
+        <form id="forgot-form" novalidate>
+          <div class="form-group">
+            <label for="forgot-email">Email</label>
+            <input type="email" id="forgot-email" class="form-control" placeholder="admin@example.com" autocomplete="email" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Send Reset Email</button>
+        </form>
+        <div style="text-align:center; margin-top:.8rem; font-size:.85rem;">
+          <button type="button" class="btn-link" onclick="showAdminLogin()">← Back to Sign In</button>
+        </div>
+      </div>
 
       <div style="text-align:center; margin-top:1.5rem; font-size:.85rem; color:var(--muted);">
         <a href="../index.html">← Back to Public Site</a>
@@ -49,5 +75,46 @@
   <script src="../js/data.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/admin.js"></script>
+  <script>
+    function showAdminForgot() {
+      document.getElementById('admin-login-section').classList.add('hidden');
+      document.getElementById('admin-forgot-section').classList.remove('hidden');
+      document.getElementById('login-error').classList.add('hidden');
+    }
+    function showAdminLogin() {
+      document.getElementById('admin-forgot-section').classList.add('hidden');
+      document.getElementById('admin-login-section').classList.remove('hidden');
+      document.getElementById('forgot-error').classList.add('hidden');
+      document.getElementById('forgot-success').classList.add('hidden');
+    }
+    document.getElementById('forgot-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email  = document.getElementById('forgot-email').value.trim();
+      const errEl  = document.getElementById('forgot-error');
+      const succEl = document.getElementById('forgot-success');
+      const btn    = e.target.querySelector('[type="submit"]');
+
+      errEl.classList.add('hidden');
+      succEl.classList.add('hidden');
+
+      if (!email) {
+        errEl.textContent = 'Please enter your email address.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await sendPasswordReset(email);
+        succEl.textContent = 'Password reset email sent! Check your inbox.';
+        succEl.classList.remove('hidden');
+        document.getElementById('forgot-email').value = '';
+      } catch (err) {
+        errEl.textContent = err.message || 'Failed to send reset email. Please try again.';
+        errEl.classList.remove('hidden');
+      }
+      btn.disabled = false; btn.textContent = 'Send Reset Email';
+    });
+  </script>
 </body>
 </html>

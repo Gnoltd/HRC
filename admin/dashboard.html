@@ -8,7 +8,6 @@
 </head>
 <body data-page="admin-dashboard">
 
-  <!-- Top Navbar -->
   <nav class="navbar">
     <a class="navbar-brand" href="../index.html">
       ResearchHub
@@ -19,6 +18,15 @@
       <li><button class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.5)" onclick="showChangePassModal()">Change Password</button></li>
       <li><button class="btn btn-danger btn-sm" onclick="handleLogout()">Logout</button></li>
     </ul>
+  </nav>
+
+  <!-- Mobile admin nav -->
+  <nav class="admin-mobile-nav" id="admin-mobile-nav">
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="pending.html">Pending</a>
+    <a href="all-projects.html">All Projects</a>
+    <a href="users.html">Users</a>
+    <button onclick="handleLogout()">Logout</button>
   </nav>
 
   <div class="admin-layout">

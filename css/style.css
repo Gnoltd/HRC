@@ -414,7 +414,7 @@ textarea.form-control { resize: vertical; min-height: 100px; }
 .admin-layout {
   display: grid;
   grid-template-columns: 220px 1fr;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px); /* 64px = navbar height */
 }
 .admin-sidebar {
   background: var(--primary);
@@ -595,7 +595,6 @@ textarea.form-control { resize: vertical; min-height: 100px; }
 }
 .footer a { color: rgba(255,255,255,.85); }
 
-/* ---------- Responsive ---------- */
 /* ---------- Active tab (admin filter tabs) ---------- */
 .active-tab {
   background: var(--primary) !important;
@@ -603,18 +602,73 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   border-color: var(--primary) !important;
 }
 
+/* ---------- Hamburger Menu ---------- */
+.navbar-toggler {
+  display: none;
+  background: none; border: none; cursor: pointer;
+  padding: .4rem;
+  color: #fff;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* ---------- Link-styled Button ---------- */
+.btn-link {
+  background: none; border: none; padding: 0;
+  color: var(--primary-light); font-size: inherit;
+  cursor: pointer; font-family: var(--font);
+  text-decoration: none;
+}
+.btn-link:hover { text-decoration: underline; }
+
+/* ---------- Admin Mobile Nav ---------- */
+.admin-mobile-nav {
+  display: none;
+  background: var(--primary);
+  padding: .5rem 1rem;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.admin-mobile-nav a, .admin-mobile-nav button {
+  color: rgba(255,255,255,.85);
+  font-size: .88rem;
+  padding: .35rem .7rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.3);
+  background: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font);
+  font-weight: 600;
+}
+.admin-mobile-nav a:hover, .admin-mobile-nav button:hover {
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .detail-layout { grid-template-columns: 1fr; }
   .admin-layout  { grid-template-columns: 1fr; }
   .admin-sidebar { display: none; }
+  .admin-mobile-nav { display: flex; }
   .form-row { grid-template-columns: 1fr; }
+  .data-table { font-size: .82rem; }
+  .data-table th, .data-table td { padding: .6rem .75rem; }
 }
 @media (max-width: 640px) {
   .navbar { padding: 0 1rem; }
+  .navbar-nav { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--primary); padding: 1rem; gap: .5rem; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
+  .navbar-nav.open { display: flex; }
+  .navbar-toggler { display: block; }
   .hero { padding: 2rem 1rem; }
   .hero h1 { font-size: 1.6rem; }
   .project-grid { grid-template-columns: 1fr; }
   .filter-bar { flex-direction: column; }
   .stat-cards { grid-template-columns: 1fr 1fr; }
   h1 { font-size: 1.5rem; }
+  .login-card { padding: 1.5rem 1.2rem; }
+  .modal { margin: 0 .5rem; }
+  .table-wrap { overflow-x: auto; }
 }
