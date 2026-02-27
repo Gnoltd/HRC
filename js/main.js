@@ -12,28 +12,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 /* ---- Shared: nav auth link ---- */
 function updateNavAuthLink() {
-  // Update admin link
+  const userEl  = document.getElementById('nav-user-link');
   const adminEl = document.getElementById('nav-admin-link');
-  if (adminEl && isAdminLoggedIn()) {
-    adminEl.textContent = 'Admin Panel';
-    adminEl.href = 'admin/dashboard.html';
-  }
 
-  // Update user link based on Firebase Auth state (listener attached once)
-  const userEl = document.getElementById('nav-user-link');
-  if (!userEl) return;
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      userEl.textContent = 'Guest';
-      userEl.href = 'login.html';
+      if (userEl)  { userEl.textContent  = 'Guest'; userEl.href  = 'login.html'; }
+      if (adminEl) { adminEl.textContent = 'Guest'; adminEl.href = 'login.html'; }
       return;
     }
     try {
       const profile = await getUserProfile(user.uid);
       if (profile) {
-        const label = profile.role === 'admin' ? 'Admin' : (profile.displayName || profile.email);
-        userEl.textContent = label;
-        userEl.href = 'login.html';
+        const isAdmin = profile.role === 'admin';
+        if (userEl) {
+          userEl.textContent = profile.displayName || profile.email;
+          userEl.href = 'login.html';
+        }
+        if (adminEl) {
+          adminEl.textContent = isAdmin ? 'Admin' : 'User';
+          adminEl.href = isAdmin ? 'admin/dashboard.html' : 'login.html';
+        }
       }
     } catch (_) {}
   });
