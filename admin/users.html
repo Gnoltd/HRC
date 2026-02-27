@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management — ResearchHub Admin</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body data-page="admin-users">
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="../index.html">ResearchHub</a>
+    <ul class="navbar-nav">
+      <li><a href="../index.html">Public Site ↗</a></li>
+      <li><button class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.5)" onclick="showChangePassModal()">Change Password</button></li>
+      <li><button class="btn btn-danger btn-sm" onclick="handleLogout()">Logout</button></li>
+    </ul>
+  </nav>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo">Admin Panel</div>
+      <ul class="sidebar-menu">
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="pending.html">Pending Review</a></li>
+        <li><a href="all-projects.html">All Projects</a></li>
+        <li><a href="users.html" class="active">User Management</a></li>
+        <li><a href="../index.html" target="_blank">Public Site</a></li>
+        <li><a href="#" onclick="handleLogout();return false;">Logout</a></li>
+      </ul>
+    </aside>
+
+    <main class="admin-content">
+      <div class="flex justify-between align-center mb-2">
+        <h1 style="margin-bottom:0">User Management</h1>
+        <button class="btn btn-primary" onclick="showInviteModal()">+ Invite Admin</button>
+      </div>
+
+      <div class="alert alert-info mb-2">
+        Manage user accounts. Approve pending users, assign admin roles, or invite new admins.
+      </div>
+
+      <div style="display:flex; gap:.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+        <button class="btn btn-sm btn-outline tab-btn active-tab" id="tab-all"      onclick="filterUsers('all')">All</button>
+        <button class="btn btn-sm btn-outline tab-btn"             id="tab-pending"  onclick="filterUsers('pending')">Pending</button>
+        <button class="btn btn-sm btn-outline tab-btn"             id="tab-approved" onclick="filterUsers('approved')">Approved</button>
+        <button class="btn btn-sm btn-outline tab-btn"             id="tab-admin"    onclick="filterUsers('admin')">Admins</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name / Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="5" class="text-center text-muted" style="padding:2rem">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <!-- Invite Admin Modal -->
+  <div id="invite-modal" class="modal-overlay hidden">
+    <div class="modal" style="max-width:440px">
+      <div class="modal-header">
+        <h2>Invite New Admin</h2>
+        <button class="modal-close" onclick="hideInviteModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color:var(--muted); font-size:.9rem; margin-bottom:1rem;">Create an admin account. The user can sign in with these credentials and change their password afterwards.</p>
+        <div id="invite-error" class="alert alert-danger hidden"></div>
+        <div class="form-group">
+          <label>Display Name <span class="required">*</span></label>
+          <input type="text" id="invite-name" class="form-control" placeholder="Full name" />
+        </div>
+        <div class="form-group">
+          <label>Email <span class="required">*</span></label>
+          <input type="email" id="invite-email" class="form-control" placeholder="admin@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Temporary Password <span class="required">*</span></label>
+          <input type="password" id="invite-pass" class="form-control" placeholder="Min 6 characters" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="hideInviteModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="inviteAdmin()">Create Admin Account</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="change-pass-modal" class="modal-overlay hidden">
+    <div class="modal" style="max-width:420px">
+      <div class="modal-header">
+        <h2>Change Password</h2>
+        <button class="modal-close" onclick="hideChangePassModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="cp-error" class="alert alert-danger hidden"></div>
+        <div id="cp-success" class="alert alert-success hidden"></div>
+        <div class="form-group">
+          <label>Current Password</label>
+          <input type="password" id="cp-current" class="form-control" placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="cp-new" class="form-control" placeholder="Min 6 characters" />
+        </div>
+        <div class="form-group">
+          <label>Confirm New Password</label>
+          <input type="password" id="cp-confirm" class="form-control" placeholder="Repeat new password" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="hideChangePassModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitChangePassword()">Update Password</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="../js/firebase-config.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

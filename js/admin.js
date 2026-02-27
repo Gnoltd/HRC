@@ -2,13 +2,39 @@
    admin.js — Admin-side logic
    ===================================================== */
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   const page = document.body.dataset.page;
-  if (page === 'admin-login')     initLoginPage();
-  if (page === 'admin-dashboard') await initDashboardPage();
-  if (page === 'admin-pending')   await initPendingPage();
-  if (page === 'admin-all')       await initAllProjectsPage();
-  if (page === 'admin-review')    await initReviewPage();
+
+  if (page === 'admin-login') {
+    initLoginPage();
+    return;
+  }
+
+  // All other admin pages require Firebase Auth + admin role
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+    try {
+      const profile = await getUserProfile(user.uid);
+      if (!profile || profile.role !== 'admin' || profile.status !== 'approved') {
+        await authSignOut();
+        window.location.href = 'login.html';
+        return;
+      }
+      setAdminSession(profile);
+
+      if (page === 'admin-dashboard') await initDashboardPage();
+      if (page === 'admin-pending')   await initPendingPage();
+      if (page === 'admin-all')       await initAllProjectsPage();
+      if (page === 'admin-review')    await initReviewPage();
+      if (page === 'admin-users')     await initUsersPage();
+    } catch (err) {
+      console.error('Auth check failed:', err);
+      window.location.href = 'login.html';
+    }
+  });
 });
 
 /* ===================================================
@@ -18,17 +44,49 @@ function initLoginPage() {
   const form    = document.getElementById('login-form');
   const errorEl = document.getElementById('login-error');
 
-  if (isAdminLoggedIn()) { window.location.href = 'dashboard.html'; return; }
+  // If already signed in as admin, go to dashboard
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) return;
+    try {
+      const profile = await getUserProfile(user.uid);
+      if (profile && profile.role === 'admin' && profile.status === 'approved') {
+        setAdminSession(profile);
+        window.location.href = 'dashboard.html';
+      }
+    } catch (_) {}
+  });
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value;
-    if (adminLogin(user, pass)) {
-      window.location.href = 'dashboard.html';
-    } else {
+    const email = document.getElementById('email').value.trim();
+    const pass  = document.getElementById('password').value;
+    const btn   = form.querySelector('[type="submit"]');
+
+    errorEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      const { profile } = await signInWithEmail(email, pass);
+      if (profile.role !== 'admin') {
+        await auth.signOut();
+        errorEl.textContent = 'This account does not have admin privileges.';
+        errorEl.classList.remove('hidden');
+      } else if (profile.status !== 'approved') {
+        await auth.signOut();
+        errorEl.textContent = 'Your admin account is pending approval by another admin.';
+        errorEl.classList.remove('hidden');
+      } else {
+        setAdminSession(profile);
+        window.location.href = 'dashboard.html';
+        return;
+      }
+    } catch (err) {
+      errorEl.textContent = 'Invalid email or password. Please try again.';
       errorEl.classList.remove('hidden');
     }
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
   });
 }
 
@@ -36,7 +94,6 @@ function initLoginPage() {
    DASHBOARD PAGE
    =================================================== */
 async function initDashboardPage() {
-  if (!requireAdmin()) return;
   renderAdminMeta();
   await renderDashboardStats();
   await renderRecentPending();
@@ -44,9 +101,9 @@ async function initDashboardPage() {
 }
 
 function renderAdminMeta() {
-  const info = JSON.parse(sessionStorage.getItem('rp_admin_auth') || '{}');
+  const info = getAdminSession();
   const el = document.getElementById('admin-user');
-  if (el) el.textContent = info.user || 'Admin';
+  if (el) el.textContent = info ? (info.user || 'Admin') : 'Admin';
 }
 
 async function renderDashboardStats() {
@@ -121,7 +178,6 @@ async function quickDelete(id) {
    PENDING PAGE
    =================================================== */
 async function initPendingPage() {
-  if (!requireAdmin()) return;
   await renderPendingTable();
 }
 
@@ -177,8 +233,6 @@ async function quickReject(id) {
    ALL PROJECTS PAGE
    =================================================== */
 async function initAllProjectsPage() {
-  if (!requireAdmin()) return;
-
   const searchEl  = document.getElementById('admin-search');
   const statusEl  = document.getElementById('status-filter');
 
@@ -253,7 +307,6 @@ async function adminDelete(id) {
    REVIEW PAGE
    =================================================== */
 async function initReviewPage() {
-  if (!requireAdmin()) return;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
   if (!id) { window.location.href = 'pending.html'; return; }
@@ -356,6 +409,208 @@ function setupReviewActions(p) {
 
 /* ---- Logout ---- */
 function handleLogout() {
-  adminLogout();
-  window.location.href = 'login.html';
+  authSignOut().then(() => {
+    window.location.href = 'login.html';
+  });
+}
+
+/* ===================================================
+   USERS PAGE
+   =================================================== */
+let allUsers = [];
+let currentFilter = 'all';
+
+async function initUsersPage() {
+  allUsers = await getAllUsers();
+  renderUsersTable();
+}
+
+function filterUsers(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+  const btn = document.getElementById('tab-' + filter);
+  if (btn) btn.classList.add('active-tab');
+  renderUsersTable();
+}
+
+function renderUsersTable() {
+  let list = allUsers;
+  if (currentFilter === 'pending')  list = list.filter(u => u.status === 'pending');
+  if (currentFilter === 'approved') list = list.filter(u => u.status === 'approved');
+  if (currentFilter === 'admin')    list = list.filter(u => u.role === 'admin');
+
+  const tbody = document.getElementById('users-tbody');
+  if (!tbody) return;
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:2rem">No users found</td></tr>`;
+    return;
+  }
+
+  const session = getAdminSession();
+  tbody.innerHTML = list.map(u => {
+    const isSelf = session && session.uid === u.uid;
+    const roleBadge = u.role === 'admin'
+      ? `<span class="badge badge-primary">Admin</span>`
+      : `<span class="badge badge-secondary">User</span>`;
+    const statusBadge = u.status === 'approved'
+      ? `<span class="badge badge-success">Approved</span>`
+      : `<span class="badge badge-warning">Pending</span>`;
+    const actions = isSelf ? `<span style="color:var(--muted);font-size:.82rem;">(current admin)</span>` : `
+      ${u.status === 'pending' ? `<button class="btn btn-success btn-sm" onclick="approveUser('${u.uid}')">Approve</button>` : ''}
+      ${u.status === 'approved' && u.role === 'user'  ? `<button class="btn btn-primary btn-sm" onclick="setRole('${u.uid}','admin')">Make Admin</button>` : ''}
+      ${u.status === 'approved' && u.role === 'admin' ? `<button class="btn btn-outline btn-sm"  onclick="setRole('${u.uid}','user')">Revoke Admin</button>` : ''}
+      <button class="btn btn-danger btn-sm" onclick="removeUser('${u.uid}')">Remove</button>`;
+    return `<tr>
+      <td>
+        <div style="font-weight:600">${u.displayName || '—'}</div>
+        <div style="font-size:.82rem;color:var(--muted)">${u.email}</div>
+      </td>
+      <td>${roleBadge}</td>
+      <td>${statusBadge}</td>
+      <td>${formatDate(u.createdAt)}</td>
+      <td class="actions">${actions}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function approveUser(uid) {
+  await updateUserProfile(uid, { status: 'approved' });
+  allUsers = await getAllUsers();
+  renderUsersTable();
+  showToast('User approved.', 'success');
+}
+
+async function setRole(uid, role) {
+  await updateUserProfile(uid, { role, status: 'approved' });
+  allUsers = await getAllUsers();
+  renderUsersTable();
+  showToast(`Role updated to ${role}.`, 'success');
+}
+
+async function removeUser(uid) {
+  if (!confirm('Remove this user from the system? They will lose access.')) return;
+  await db.ref('users/' + uid).remove();
+  allUsers = await getAllUsers();
+  renderUsersTable();
+  showToast('User removed.', 'success');
+}
+
+/* ---- Invite Admin Modal ---- */
+function showInviteModal() {
+  const m = document.getElementById('invite-modal');
+  if (m) { m.classList.remove('hidden'); m.classList.add('open'); }
+}
+function hideInviteModal() {
+  const m = document.getElementById('invite-modal');
+  if (m) { m.classList.remove('open'); m.classList.add('hidden'); }
+  ['invite-name','invite-email','invite-pass'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  const errEl = document.getElementById('invite-error');
+  if (errEl) errEl.classList.add('hidden');
+}
+
+async function inviteAdmin() {
+  const name  = document.getElementById('invite-name').value.trim();
+  const email = document.getElementById('invite-email').value.trim();
+  const pass  = document.getElementById('invite-pass').value;
+  const errEl = document.getElementById('invite-error');
+
+  errEl.classList.add('hidden');
+
+  if (!name || !email || !pass) {
+    errEl.textContent = 'Please fill in all fields.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (pass.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const btn = document.querySelector('#invite-modal .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
+
+  try {
+    // Use a secondary Firebase app instance so the current admin stays signed in
+    const secondaryApp = firebase.initializeApp(firebaseConfig, 'InviteApp_' + Date.now() + '_' + Math.random().toString(36).slice(2));
+    const secondaryAuth = secondaryApp.auth();
+    const result = await secondaryAuth.createUserWithEmailAndPassword(email, pass);
+    await result.user.updateProfile({ displayName: name });
+    // Create DB profile as approved admin
+    await createUserProfile(result.user.uid, email, name, null, 'admin', 'approved');
+    await secondaryAuth.signOut();
+    await secondaryApp.delete();
+
+    showToast(`Admin account created for ${name}.`, 'success');
+    hideInviteModal();
+    allUsers = await getAllUsers();
+    renderUsersTable();
+  } catch (err) {
+    errEl.textContent = err.message || 'Failed to create account.';
+    errEl.classList.remove('hidden');
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Create Admin Account'; }
+}
+
+/* ---- Change Password Modal ---- */
+function showChangePassModal() {
+  const m = document.getElementById('change-pass-modal');
+  if (m) { m.classList.remove('hidden'); m.classList.add('open'); }
+}
+function hideChangePassModal() {
+  const m = document.getElementById('change-pass-modal');
+  if (m) { m.classList.remove('open'); m.classList.add('hidden'); }
+  ['cp-current','cp-new','cp-confirm'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['cp-error','cp-success'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+}
+
+async function submitChangePassword() {
+  const current  = document.getElementById('cp-current')?.value || '';
+  const newPass  = document.getElementById('cp-new')?.value || '';
+  const confirm  = document.getElementById('cp-confirm')?.value || '';
+  const errEl    = document.getElementById('cp-error');
+  const succEl   = document.getElementById('cp-success');
+
+  errEl.classList.add('hidden');
+  succEl.classList.add('hidden');
+
+  if (!current || !newPass || !confirm) {
+    errEl.textContent = 'Please fill in all fields.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (newPass.length < 6) {
+    errEl.textContent = 'New password must be at least 6 characters.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (newPass !== confirm) {
+    errEl.textContent = 'New passwords do not match.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const btn = document.querySelector('#change-pass-modal .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Updating…'; }
+
+  try {
+    await changePassword(current, newPass);
+    succEl.textContent = 'Password updated successfully!';
+    succEl.classList.remove('hidden');
+    setTimeout(hideChangePassModal, 2000);
+  } catch (err) {
+    errEl.textContent = err.message || 'Failed to update password.';
+    errEl.classList.remove('hidden');
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Update Password'; }
 }

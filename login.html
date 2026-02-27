@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — HRC.HSB.EDU.VN</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .google-btn {
+      display: flex; align-items: center; justify-content: center; gap: .7rem;
+      width: 100%; padding: .6rem 1rem;
+      background: #fff; border: 2px solid var(--border);
+      border-radius: var(--radius); font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: background var(--transition), box-shadow var(--transition);
+      color: var(--text); font-family: var(--font);
+    }
+    .google-btn:hover { background: #f8fafc; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
+    .google-btn img { width: 20px; height: 20px; }
+    .divider { display: flex; align-items: center; gap: .8rem; margin: 1rem 0; color: var(--muted); font-size: .85rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
+    .tab-row { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1.5rem; }
+    .tab-btn { flex: 1; padding: .6rem; border: none; background: none; font-size: .95rem; font-weight: 600; cursor: pointer; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .profile-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">HRC - HSB.EDU.VN</a>
+    <ul class="navbar-nav">
+      <li><a href="index.html">Projects</a></li>
+      <li><a href="submit.html">Submit Project</a></li>
+    </ul>
+  </nav>
+
+  <div class="login-wrap">
+    <div class="login-card" style="max-width:460px">
+
+      <!-- Signed-out view -->
+      <div id="auth-forms">
+        <div class="login-logo">
+          <h2>Welcome</h2>
+          <p>Sign in or create an account</p>
+        </div>
+
+        <div class="tab-row">
+          <button class="tab-btn active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+          <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+        </div>
+
+        <!-- Sign In -->
+        <div id="form-signin">
+          <button type="button" class="google-btn mb-2" onclick="handleGoogleSignIn()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+            Continue with Google
+          </button>
+          <div class="divider">or</div>
+          <div id="signin-error" class="alert alert-danger hidden"></div>
+          <form id="signin-form" novalidate>
+            <div class="form-group">
+              <label for="si-email">Email</label>
+              <input type="email" id="si-email" class="form-control" placeholder="you@example.com" autocomplete="email" required />
+            </div>
+            <div class="form-group">
+              <label for="si-pass">Password</label>
+              <input type="password" id="si-pass" class="form-control" placeholder="••••••••" autocomplete="current-password" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </form>
+        </div>
+
+        <!-- Register -->
+        <div id="form-register" class="hidden">
+          <button type="button" class="google-btn mb-2" onclick="handleGoogleSignIn()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+            Continue with Google
+          </button>
+          <div class="divider">or register with email</div>
+          <div id="register-error" class="alert alert-danger hidden"></div>
+          <form id="register-form" novalidate>
+            <div class="form-group">
+              <label for="reg-name">Display Name <span class="required">*</span></label>
+              <input type="text" id="reg-name" class="form-control" placeholder="Your full name" autocomplete="name" required />
+            </div>
+            <div class="form-group">
+              <label for="reg-email">Email <span class="required">*</span></label>
+              <input type="email" id="reg-email" class="form-control" placeholder="you@example.com" autocomplete="email" required />
+            </div>
+            <div class="form-group">
+              <label for="reg-pass">Password <span class="required">*</span></label>
+              <input type="password" id="reg-pass" class="form-control" placeholder="Min 6 characters" autocomplete="new-password" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+          </form>
+        </div>
+
+        <div style="text-align:center; margin-top:1.2rem; font-size:.85rem; color:var(--muted);">
+          <a href="index.html">← Back to Projects</a>
+        </div>
+      </div>
+
+      <!-- Signed-in view (pending) -->
+      <div id="auth-pending" class="hidden">
+        <div class="login-logo">
+          <h2>Account Pending</h2>
+        </div>
+        <div class="alert alert-warning">
+          <strong>Awaiting approval.</strong> Your account has been created and is pending approval by an administrator. You will be able to access the portal once approved.
+        </div>
+        <div id="pending-profile" class="profile-card"></div>
+        <button class="btn btn-outline btn-block mt-2" onclick="handleUserSignOut()">Sign Out</button>
+      </div>
+
+      <!-- Signed-in view (approved) -->
+      <div id="auth-profile" class="hidden">
+        <div class="login-logo">
+          <h2 id="profile-greeting">Welcome!</h2>
+        </div>
+        <div id="profile-info" class="profile-card"></div>
+        <div id="profile-actions" style="display:flex; flex-direction:column; gap:.6rem; margin-top:.5rem;"></div>
+
+        <!-- Change Password (email users only) -->
+        <div id="change-pass-section" class="hidden" style="margin-top:1.2rem; padding-top:1.2rem; border-top:1px solid var(--border);">
+          <h3 style="font-size:.95rem; margin-bottom:.8rem;">Change Password</h3>
+          <div id="cp-error" class="alert alert-danger hidden"></div>
+          <div id="cp-success" class="alert alert-success hidden"></div>
+          <div class="form-group">
+            <label>Current Password</label>
+            <input type="password" id="cp-current" class="form-control" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="cp-new" class="form-control" placeholder="Min 6 characters" />
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="cp-confirm" class="form-control" placeholder="Repeat new password" />
+          </div>
+          <button class="btn btn-primary btn-block" onclick="handleChangePassword()">Update Password</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    /* ---- Tab switching ---- */
+    function switchTab(tab) {
+      document.getElementById('form-signin').classList.toggle('hidden', tab !== 'signin');
+      document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+      document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    }
+
+    /* ---- Auth state ---- */
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        showSection('forms');
+        return;
+      }
+      try {
+        let profile = await getUserProfile(user.uid);
+        if (!profile) {
+          profile = await createUserProfile(user.uid, user.email, user.displayName, user.photoURL);
+        }
+        if (profile.status !== 'approved') {
+          showSection('pending');
+          document.getElementById('pending-profile').innerHTML =
+            `<strong>${profile.displayName || profile.email}</strong><br>
+             <span style="color:var(--muted);font-size:.88rem">${profile.email}</span>`;
+        } else {
+          showSection('profile');
+          renderProfile(user, profile);
+        }
+      } catch (err) {
+        console.error(err);
+        showSection('forms');
+      }
+    });
+
+    function showSection(name) {
+      document.getElementById('auth-forms').classList.toggle('hidden', name !== 'forms');
+      document.getElementById('auth-pending').classList.toggle('hidden', name !== 'pending');
+      document.getElementById('auth-profile').classList.toggle('hidden', name !== 'profile');
+    }
+
+    function renderProfile(user, profile) {
+      document.getElementById('profile-greeting').textContent = `Welcome, ${profile.displayName || profile.email}!`;
+      document.getElementById('profile-info').innerHTML = `
+        <div style="display:flex; gap:.8rem; align-items:center; flex-wrap:wrap;">
+          ${user.photoURL ? `<img src="${user.photoURL}" alt="avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover">` : ''}
+          <div>
+            <div style="font-weight:600">${profile.displayName || '—'}</div>
+            <div style="font-size:.85rem;color:var(--muted)">${profile.email}</div>
+            <div style="margin-top:.3rem">
+              <span class="badge ${profile.role === 'admin' ? 'badge-primary' : 'badge-secondary'}">${profile.role}</span>
+              <span class="badge badge-success" style="margin-left:.3rem">Approved</span>
+            </div>
+          </div>
+        </div>`;
+
+      const actionsEl = document.getElementById('profile-actions');
+      let actions = `<a href="index.html" class="btn btn-primary btn-block">Browse Projects</a>`;
+      if (profile.role === 'admin') {
+        actions += `<a href="admin/dashboard.html" class="btn btn-outline btn-block">Go to Admin Panel</a>`;
+      }
+      actions += `<button class="btn btn-outline btn-block" onclick="handleUserSignOut()">Sign Out</button>`;
+      actionsEl.innerHTML = actions;
+
+      // Show change password section for email/password users
+      const isEmailUser = user.providerData.some(p => p.providerId === 'password');
+      document.getElementById('change-pass-section').classList.toggle('hidden', !isEmailUser);
+    }
+
+    /* ---- Sign In handlers ---- */
+    document.getElementById('signin-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = document.getElementById('si-email').value.trim();
+      const pass  = document.getElementById('si-pass').value;
+      const errEl = document.getElementById('signin-error');
+      const btn   = e.target.querySelector('[type="submit"]');
+
+      errEl.classList.add('hidden');
+      btn.disabled = true; btn.textContent = 'Signing in…';
+
+      try {
+        await signInWithEmail(email, pass);
+        // auth.onAuthStateChanged will handle redirect
+      } catch (err) {
+        errEl.textContent = 'Invalid email or password. Please try again.';
+        errEl.classList.remove('hidden');
+        btn.disabled = false; btn.textContent = 'Sign In';
+      }
+    });
+
+    document.getElementById('register-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name  = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const pass  = document.getElementById('reg-pass').value;
+      const errEl = document.getElementById('register-error');
+      const btn   = e.target.querySelector('[type="submit"]');
+
+      errEl.classList.add('hidden');
+      if (!name || !email || !pass) {
+        errEl.textContent = 'Please fill in all fields.'; errEl.classList.remove('hidden'); return;
+      }
+      if (pass.length < 6) {
+        errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.remove('hidden'); return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Creating account…';
+      try {
+        await registerWithEmail(email, pass, name);
+        // auth.onAuthStateChanged will handle display
+      } catch (err) {
+        errEl.textContent = err.message || 'Registration failed. Please try again.';
+        errEl.classList.remove('hidden');
+        btn.disabled = false; btn.textContent = 'Create Account';
+      }
+    });
+
+    async function handleGoogleSignIn() {
+      try {
+        await signInWithGoogle();
+      } catch (err) {
+        showToast(err.message || 'Google sign-in failed.', 'error');
+      }
+    }
+
+    async function handleUserSignOut() {
+      await authSignOut();
+      showSection('forms');
+    }
+
+    /* ---- Change password ---- */
+    async function handleChangePassword() {
+      const current = document.getElementById('cp-current').value;
+      const newPass = document.getElementById('cp-new').value;
+      const confirm = document.getElementById('cp-confirm').value;
+      const errEl   = document.getElementById('cp-error');
+      const succEl  = document.getElementById('cp-success');
+
+      errEl.classList.add('hidden');
+      succEl.classList.add('hidden');
+
+      if (!current || !newPass || !confirm) {
+        errEl.textContent = 'Please fill in all fields.'; errEl.classList.remove('hidden'); return;
+      }
+      if (newPass.length < 6) {
+        errEl.textContent = 'New password must be at least 6 characters.'; errEl.classList.remove('hidden'); return;
+      }
+      if (newPass !== confirm) {
+        errEl.textContent = 'New passwords do not match.'; errEl.classList.remove('hidden'); return;
+      }
+
+      try {
+        await changePassword(current, newPass);
+        succEl.textContent = 'Password updated successfully!';
+        succEl.classList.remove('hidden');
+        document.getElementById('cp-current').value = '';
+        document.getElementById('cp-new').value = '';
+        document.getElementById('cp-confirm').value = '';
+      } catch (err) {
+        errEl.textContent = err.message || 'Failed to update password.';
+        errEl.classList.remove('hidden');
+      }
+    }
+  </script>
+</body>
+</html>
