@@ -84,6 +84,10 @@ async function authSignOut() {
 
 /* ---- Password management ---- */
 
+async function sendPasswordReset(email) {
+  await auth.sendPasswordResetEmail(email);
+}
+
 async function changePassword(currentPassword, newPassword) {
   const user = auth.currentUser;
   if (!user) throw new Error('Not signed in');

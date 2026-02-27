@@ -28,7 +28,8 @@
 
   <nav class="navbar">
     <a class="navbar-brand" href="index.html">HRC - HSB.EDU.VN</a>
-    <ul class="navbar-nav">
+    <button class="navbar-toggler" aria-label="Toggle navigation" onclick="document.getElementById('main-nav').classList.toggle('open')">&#9776;</button>
+    <ul class="navbar-nav" id="main-nav">
       <li><a href="index.html">Projects</a></li>
       <li><a href="submit.html">Submit Project</a></li>
     </ul>
@@ -68,6 +69,29 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block">Sign In</button>
           </form>
+          <div style="text-align:center; margin-top:.8rem; font-size:.85rem;">
+            <button type="button" class="btn-link" onclick="switchTab('forgot')">Forgot password?</button>
+          </div>
+        </div>
+
+        <!-- Forgot Password -->
+        <div id="form-forgot" class="hidden">
+          <div class="login-logo" style="margin-bottom:1rem;">
+            <h2 style="font-size:1.2rem;">Reset Password</h2>
+            <p>Enter your email and we'll send you a reset link.</p>
+          </div>
+          <div id="forgot-error" class="alert alert-danger hidden"></div>
+          <div id="forgot-success" class="alert alert-success hidden"></div>
+          <form id="forgot-form" novalidate>
+            <div class="form-group">
+              <label for="forgot-email">Email</label>
+              <input type="email" id="forgot-email" class="form-control" placeholder="you@example.com" autocomplete="email" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send Reset Email</button>
+          </form>
+          <div style="text-align:center; margin-top:.8rem; font-size:.85rem;">
+            <button type="button" class="btn-link" onclick="switchTab('signin')">← Back to Sign In</button>
+          </div>
         </div>
 
         <!-- Register -->
@@ -157,6 +181,7 @@
     function switchTab(tab) {
       document.getElementById('form-signin').classList.toggle('hidden', tab !== 'signin');
       document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+      document.getElementById('form-forgot').classList.toggle('hidden', tab !== 'forgot');
       document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
       document.getElementById('tab-register').classList.toggle('active', tab === 'register');
     }
@@ -281,6 +306,36 @@
       await authSignOut();
       showSection('forms');
     }
+
+    /* ---- Forgot password ---- */
+    document.getElementById('forgot-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email  = document.getElementById('forgot-email').value.trim();
+      const errEl  = document.getElementById('forgot-error');
+      const succEl = document.getElementById('forgot-success');
+      const btn    = e.target.querySelector('[type="submit"]');
+
+      errEl.classList.add('hidden');
+      succEl.classList.add('hidden');
+
+      if (!email) {
+        errEl.textContent = 'Please enter your email address.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        await sendPasswordReset(email);
+        succEl.textContent = 'Password reset email sent! Check your inbox.';
+        succEl.classList.remove('hidden');
+        document.getElementById('forgot-email').value = '';
+      } catch (err) {
+        errEl.textContent = err.message || 'Failed to send reset email. Please try again.';
+        errEl.classList.remove('hidden');
+      }
+      btn.disabled = false; btn.textContent = 'Send Reset Email';
+    });
 
     /* ---- Change password ---- */
     async function handleChangePassword() {
