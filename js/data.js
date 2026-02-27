@@ -56,15 +56,19 @@ function generateId() {
 }
 
 /* ---- Auth ---- */
-const ADMIN_USER = 'admin';
-const ADMIN_PASS = 'admin123'; // demo only
 
-function adminLogin(user, pass) {
-  if (user === ADMIN_USER && pass === ADMIN_PASS) {
-    sessionStorage.setItem(AUTH_KEY, JSON.stringify({ user, loginAt: Date.now() }));
-    return true;
-  }
-  return false;
+function setAdminSession(profile) {
+  sessionStorage.setItem(AUTH_KEY, JSON.stringify({
+    uid: profile.uid,
+    user: profile.displayName || profile.email,
+    email: profile.email,
+    role: profile.role,
+    loginAt: Date.now(),
+  }));
+}
+
+function getAdminSession() {
+  return JSON.parse(sessionStorage.getItem(AUTH_KEY) || 'null');
 }
 
 function adminLogout() {

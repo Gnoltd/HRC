@@ -12,12 +12,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 /* ---- Shared: nav auth link ---- */
 function updateNavAuthLink() {
-  const el = document.getElementById('nav-admin-link');
-  if (!el) return;
-  if (isAdminLoggedIn()) {
-    el.textContent = 'Admin Panel';
-    el.href = 'admin/dashboard.html';
+  // Update admin link
+  const adminEl = document.getElementById('nav-admin-link');
+  if (adminEl && isAdminLoggedIn()) {
+    adminEl.textContent = 'Admin Panel';
+    adminEl.href = 'admin/dashboard.html';
   }
+
+  // Update user link based on Firebase Auth state (listener attached once)
+  const userEl = document.getElementById('nav-user-link');
+  if (!userEl) return;
+  auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      userEl.textContent = 'Sign In';
+      userEl.href = 'login.html';
+      return;
+    }
+    try {
+      const profile = await getUserProfile(user.uid);
+      if (profile) {
+        userEl.textContent = profile.displayName || profile.email;
+        userEl.href = 'login.html';
+      }
+    } catch (_) {}
+  });
 }
 
 /* ===================================================

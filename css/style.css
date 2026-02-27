@@ -596,6 +596,13 @@ textarea.form-control { resize: vertical; min-height: 100px; }
 .footer a { color: rgba(255,255,255,.85); }
 
 /* ---------- Responsive ---------- */
+/* ---------- Active tab (admin filter tabs) ---------- */
+.active-tab {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary) !important;
+}
+
 @media (max-width: 900px) {
   .detail-layout { grid-template-columns: 1fr; }
   .admin-layout  { grid-template-columns: 1fr; }
