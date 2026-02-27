@@ -671,8 +671,8 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   .navbar-nav { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--primary); padding: 1rem; gap: .5rem; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
   .navbar-nav.open { display: flex; }
   .navbar-toggler { display: block; }
-  .hero { padding: 2rem 1rem; }
-  .hero h1 { font-size: 1.6rem; }
+  .hero { padding: 2rem 1.5rem; }
+  .hero h1 { font-size: 1.5rem; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { justify-content: center; }
   .project-grid { grid-template-columns: 1fr; }
@@ -704,4 +704,6 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   .pagination button { padding: .4rem .65rem; font-size: .85rem; }
   /* Prevent horizontal scroll on mobile */
   body { overflow-x: hidden; }
+  /* Ensure footer text wraps on narrow screens */
+  .footer { overflow-wrap: break-word; }
 }
