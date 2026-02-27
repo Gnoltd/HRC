@@ -14,7 +14,7 @@ async function createUserProfile(uid, email, displayName, photoURL, role, status
     displayName: displayName || email.split('@')[0],
     photoURL: photoURL || null,
     role: role || 'user',
-    status: status || 'pending',
+    status: status || 'approved',
     createdAt: new Date().toISOString(),
   };
   await db.ref('users/' + uid).set(profile);
