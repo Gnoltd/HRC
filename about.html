@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — HRC.HSB.EDU.VN</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .about-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #005aaa 60%, #0077cc 100%);
+      color: #fff;
+      padding: 3.5rem 2rem;
+      text-align: center;
+    }
+    .about-hero h1 { font-size: 2.2rem; margin-bottom: .6rem; }
+    .about-hero p  { font-size: 1.05rem; opacity: .88; max-width: 680px; margin: 0 auto; }
+
+    .about-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .about-section h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 3px solid var(--accent);
+      display: inline-block;
+    }
+    .about-section p {
+      font-size: .97rem;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: .8rem;
+    }
+    .about-section ol {
+      padding-left: 1.4rem;
+      margin-top: .5rem;
+    }
+    .about-section ol li {
+      font-size: .97rem;
+      line-height: 1.75;
+      color: var(--text);
+      margin-bottom: .55rem;
+    }
+
+    .stat-highlight {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.1rem;
+      margin: 1.5rem 0;
+    }
+    .stat-highlight-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem 1.4rem;
+      text-align: center;
+    }
+    .stat-highlight-card .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-light);
+      line-height: 1.1;
+    }
+    .stat-highlight-card .stat-desc {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-top: .3rem;
+    }
+
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+    .roadmap-step {
+      background: var(--bg);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 1rem 1.2rem;
+    }
+    .roadmap-step .step-label {
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--accent);
+      margin-bottom: .35rem;
+    }
+    .roadmap-step p {
+      font-size: .92rem;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0;
+    }
+
+    @media (max-width: 640px) {
+      .about-hero { padding: 2rem 1.2rem; }
+      .about-hero h1 { font-size: 1.5rem; }
+      .about-section { padding: 1.2rem 1rem; }
+      .about-section h2 { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body data-page="about">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="index.html">
+      HRC.HSB.EDU.VN
+    </a>
+    <button class="navbar-toggler" aria-label="Toggle navigation" onclick="document.getElementById('main-nav').classList.toggle('open')">&#9776;</button>
+    <ul class="navbar-nav" id="main-nav">
+      <li><a href="index.html">Projects</a></li>
+      <li><a href="submit.html">Submit Project</a></li>
+      <li><a href="about.html" class="active">About Us</a></li>
+      <li><a href="login.html" id="nav-user-link" class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.5)">Guest</a></li>
+      <li><a href="login.html" id="nav-admin-link" class="btn btn-accent btn-sm">Guest</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="about-hero">
+    <h1>HSB Research Club (HRC)</h1>
+    <p>Xây dựng chương trình nghiên cứu sinh viên đẳng cấp quốc tế, hỗ trợ mục tiêu AACSB và định vị HSB trong top 100 trường kinh doanh châu Á.</p>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container section">
+
+    <!-- Intro -->
+    <div class="about-section">
+      <p>
+        Tài liệu này cung cấp lộ trình cụ thể để xây dựng <strong>HSB Research Club</strong> thành một chương trình nghiên cứu sinh viên đẳng cấp quốc tế, hỗ trợ mục tiêu AACSB và định vị HSB trong top 100 trường kinh doanh châu Á.
+      </p>
+    </div>
+
+    <!-- Hướng Dẫn Nghiên Cứu Sinh Viên -->
+    <div class="about-section">
+      <h2>Hướng Dẫn Nghiên Cứu Sinh Viên</h2>
+
+      <!-- 1. Tại sao -->
+      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.2rem 0 .6rem;">1. TẠI SAO tham gia nghiên cứu</h3>
+      <div class="stat-highlight">
+        <div class="stat-highlight-card">
+          <div class="stat-num">2×</div>
+          <div class="stat-desc">Tỷ lệ tốt nghiệp cao gấp 2 lần so với sinh viên không nghiên cứu</div>
+        </div>
+        <div class="stat-highlight-card">
+          <div class="stat-num">1.8×</div>
+          <div class="stat-desc">Khả năng học cao học cao gấp 1.8 lần</div>
+        </div>
+        <div class="stat-highlight-card">
+          <div class="stat-num">87%</div>
+          <div class="stat-desc">Nhà tuyển dụng ưu tiên ứng viên có kinh nghiệm nghiên cứu</div>
+        </div>
+        <div class="stat-highlight-card">
+          <div class="stat-num">93%</div>
+          <div class="stat-desc">Sinh viên MIT tham gia nghiên cứu trước khi tốt nghiệp</div>
+        </div>
+      </div>
+
+      <!-- 2. Lợi ích -->
+      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.5rem 0 .6rem;">2. LỢI ÍCH cụ thể</h3>
+      <ol>
+        <li><strong>Đồng tác giả xuất bản:</strong> Trở thành co-author trên các bài báo khoa học.</li>
+        <li><strong>Chuẩn bị cao học:</strong> Yếu tố quyết định nhất cho MBA/PhD.</li>
+        <li><strong>CV nổi bật hơn trong mắt nhà tuyển dụng:</strong> Dự án thực tế để trình bày trong phỏng vấn. 87% các nhà tuyển dụng cho rằng họ cần ứng viên với kinh nghiệm nghiên cứu.</li>
+        <li><strong>Kỹ năng tư duy:</strong> Giải quyết vấn đề phức tạp không có đáp án sẵn. 80% nhà tuyển dụng cho rằng họ cần cử nhân có kỹ năng viết và thuyết trình tốt, trong khi 79% muốn sinh viên đã hoàn thiện một vài dự án thật.</li>
+        <li><strong>Mạng lưới quan hệ:</strong> Thư giới thiệu từ giáo sư.</li>
+      </ol>
+
+      <!-- 3. Lộ trình -->
+      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.5rem 0 .6rem;">3. Lộ trình cụ thể</h3>
+      <div class="roadmap">
+        <div class="roadmap-step">
+          <div class="step-label">Năm 1 – 2</div>
+          <p>Học phương pháp nghiên cứu, tìm giảng viên phù hợp, làm trợ lý nghiên cứu cơ bản.</p>
+        </div>
+        <div class="roadmap-step">
+          <div class="step-label">Năm 3</div>
+          <p>Phân tích dữ liệu, viết phần literature review, đề xuất ý tưởng mở rộng.</p>
+        </div>
+        <div class="roadmap-step">
+          <div class="step-label">Năm 4</div>
+          <p>Khóa luận độc lập, trình bày hội thảo, chuẩn bị xuất bản.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 HRC.HSB.EDU.VN — Research Projects Portal &nbsp;|&nbsp;
+      <a href="admin/login.html">Admin</a>
+    </p>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
