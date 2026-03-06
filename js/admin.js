@@ -372,7 +372,7 @@ function setupReviewActions(p) {
   const noteEl     = document.getElementById('review-note');
 
   if (approveBtn) {
-    if (p.status === 'approved') { approveBtn.disabled = true; approveBtn.textContent = '✔ Already Approved'; }
+    if (p.status === 'approved') { approveBtn.disabled = true; approveBtn.textContent = 'Already Approved'; }
     approveBtn.addEventListener('click', async () => {
       p.status = 'approved';
       p.reviewedAt = new Date().toISOString();
