@@ -161,7 +161,7 @@ function renderProjectCards() {
       <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
       <div class="card-footer">
         <a href="project-detail.html?id=${p.id}" class="btn btn-outline btn-sm">View Details</a>
-        <button class="btn btn-primary btn-sm" onclick="handleDownload('${p.id}')">⬇ Download</button>
+        <button class="btn btn-primary btn-sm" onclick="handleDownload('${p.id}')"> Download</button>
       </div>
     </div>`;
   }).join('');
@@ -322,7 +322,7 @@ async function initDetailPage() {
     </div>
 
     <div class="flex gap-1 flex-wrap mt-3">
-      <button class="btn btn-primary" onclick="handleDownload('${p.id}')">⬇ Download Project Info</button>
+      <button class="btn btn-primary" onclick="handleDownload('${p.id}')">Download Project Info</button>
       <a href="index.html" class="btn btn-outline">← Back to Projects</a>
     </div>`;
 
