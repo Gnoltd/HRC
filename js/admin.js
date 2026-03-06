@@ -276,9 +276,9 @@ async function renderAllTable() {
       <td>${formatDate(p.submittedAt)}</td>
       <td class="actions">
         <a href="review.html?id=${p.id}" class="btn btn-outline btn-sm"> Detail</a>
-        ${p.status === 'pending'  ? `<button class="btn btn-success btn-sm" onclick="adminApprove('${p.id}')">✔ Approve</button>` : ''}
+        ${p.status === 'pending'  ? `<button class="btn btn-success btn-sm" onclick="adminApprove('${p.id}')"> Approve</button>` : ''}
         ${p.status === 'approved' ? `<button class="btn btn-danger btn-sm"  onclick="adminRejectFrom('${p.id}')">Revoke</button>` : ''}
-        <button class="btn btn-danger btn-sm" onclick="adminDelete('${p.id}')">🗑 Delete</button>
+        <button class="btn btn-danger btn-sm" onclick="adminDelete('${p.id}')"> Delete</button>
       </td>
     </tr>`).join('');
 }
@@ -337,7 +337,7 @@ function renderReviewDetail(p) {
         <span> ${p.duration}</span>
         <span> ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
         <span> Submitted ${formatDateTime(p.submittedAt)}</span>
-        ${p.reviewedAt ? `<span>🔍 Reviewed ${formatDateTime(p.reviewedAt)}</span>` : ''}
+        ${p.reviewedAt ? `<span> Reviewed ${formatDateTime(p.reviewedAt)}</span>` : ''}
       </div>
       <div class="card-tags">${(Array.isArray(p.tags) ? p.tags : []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
     </div>
@@ -357,7 +357,7 @@ function renderReviewDetail(p) {
     ${p.fileName ? `
     <div class="section-block">
       <h2>Attached File</h2>
-      <p>📎 <a href="${p.fileUrl}" download="${p.fileName}">${p.fileName}</a></p>
+      <p> <a href="${p.fileUrl}" download="${p.fileName}">${p.fileName}</a></p>
     </div>` : ''}
     ${p.reviewNote ? `
     <div class="alert alert-warning mt-2">
