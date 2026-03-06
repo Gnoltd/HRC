@@ -281,7 +281,7 @@ async function initDetailPage() {
       <div class="empty-state">
         <div class="icon"></div>
         <h3>Project not found</h3>
-        <p><a href="index.html">← Back to projects</a></p>
+        <p><a href="index.html">Back to projects</a></p>
       </div>`;
     return;
   }
@@ -323,7 +323,7 @@ async function initDetailPage() {
 
     <div class="flex gap-1 flex-wrap mt-3">
       <button class="btn btn-primary" onclick="handleDownload('${p.id}')">Download Project Info</button>
-      <a href="index.html" class="btn btn-outline">← Back to Projects</a>
+      <a href="index.html" class="btn btn-outline">Back to Projects</a>
     </div>`;
 
   // Related projects sidebar
