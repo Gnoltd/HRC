@@ -51,6 +51,11 @@ async function deleteProject(id) {
   await db.ref('projects/' + id).remove();
 }
 
+async function incrementDownload(id) {
+  if (!db) throw dbError();
+  await db.ref('projects/' + id + '/downloads').transaction(current => (current || 0) + 1);
+}
+
 function generateId() {
   return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 }
