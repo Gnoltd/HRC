@@ -235,7 +235,7 @@ async function handleDownload(id) {
   }
 
   p.downloads++;
-  await saveProject(p);
+  await incrementDownload(p.id);
   showToast('Project downloaded successfully!', 'success');
 }
 

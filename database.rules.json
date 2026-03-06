@@ -2,7 +2,12 @@
   "rules": {
     "projects": {
       ".read": true,
-      ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin' && root.child('users').child(auth.uid).child('status').val() === 'approved'"
+      "$projectId": {
+        ".write": "(!data.exists() && newData.child('status').val() === 'pending') || (auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin' && root.child('users').child(auth.uid).child('status').val() === 'approved')",
+        "downloads": {
+          ".write": "data.parent().exists() && newData.isNumber() && newData.val() >= (data.val() === null ? 0 : data.val())"
+        }
+      }
     },
     "users": {
       ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin' && root.child('users').child(auth.uid).child('status').val() === 'approved'",
