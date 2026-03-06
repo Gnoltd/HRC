@@ -152,7 +152,7 @@ h3 { font-size: 1.15rem; }
 }
 
 /* ---------- Section ---------- */
-.section { padding: 2.5rem 0; }
+.section { padding-top: 2.5rem; padding-bottom: 2.5rem; }
 .section-title {
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
