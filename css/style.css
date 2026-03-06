@@ -89,10 +89,7 @@ h3 { font-size: 1.15rem; }
 .navbar {
   background: var(--primary);
   color: #fff;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: max(2rem, env(safe-area-inset-left));
-  padding-right: max(2rem, env(safe-area-inset-right));
+  padding: 0 2rem;
   display: flex; align-items: center; justify-content: space-between;
   height: 64px;
   position: sticky; top: 0; z-index: 100;
@@ -131,10 +128,7 @@ h3 { font-size: 1.15rem; }
 .hero {
   background: linear-gradient(135deg, var(--primary) 0%, #005aaa 60%, #0077cc 100%);
   color: #fff;
-  padding-top: 3.5rem;
-  padding-bottom: 3.5rem;
-  padding-left: max(2rem, env(safe-area-inset-left));
-  padding-right: max(2rem, env(safe-area-inset-right));
+  padding: 3.5rem 2rem;
   text-align: center;
 }
 .hero h1 { font-size: 2.2rem; margin-bottom: .6rem; }
@@ -145,10 +139,7 @@ h3 { font-size: 1.15rem; }
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: max(1.5rem, env(safe-area-inset-left));
-  padding-right: max(1.5rem, env(safe-area-inset-right));
+  padding: 0 1.5rem;
 }
 
 /* ---------- Section ---------- */
@@ -673,29 +664,14 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   .project-grid { grid-template-columns: repeat(2, 1fr); }
   .stat-cards   { grid-template-columns: repeat(3, 1fr); }
   .filter-bar   { gap: .75rem; }
-  /* Increase horizontal padding on tablets for visual breathing room */
-  .container {
-    padding-left: max(2rem, env(safe-area-inset-left));
-    padding-right: max(2rem, env(safe-area-inset-right));
-  }
 }
 
 @media (max-width: 640px) {
-  .navbar {
-    padding-top: 0;
-    padding-bottom: 0;
-    padding-left: max(1rem, env(safe-area-inset-left));
-    padding-right: max(1rem, env(safe-area-inset-right));
-  }
+  .navbar { padding: 0 1rem; }
   .navbar-nav { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--primary); padding: 1rem; gap: .5rem; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
   .navbar-nav.open { display: flex; }
   .navbar-toggler { display: block; }
-  .hero {
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-    padding-left: max(1.5rem, env(safe-area-inset-left));
-    padding-right: max(1.5rem, env(safe-area-inset-right));
-  }
+  .hero { padding: 2rem 1.5rem; }
   .hero h1 { font-size: 1.5rem; }
   .hero-actions { flex-direction: column; align-items: stretch; }
   .hero-actions .btn { justify-content: center; }
