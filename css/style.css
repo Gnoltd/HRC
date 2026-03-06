@@ -690,6 +690,11 @@ textarea.form-control { resize: vertical; min-height: 100px; }
   .navbar-nav { display: none; flex-direction: column; position: absolute; top: 64px; left: 0; right: 0; background: var(--primary); padding: 1rem; gap: .5rem; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,.2); }
   .navbar-nav.open { display: flex; }
   .navbar-toggler { display: block; }
+  /* Ensure main content container keeps consistent safe-area-aware margins on mobile */
+  .container {
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
+  }
   .hero {
     padding-top: 2rem;
     padding-bottom: 2rem;
