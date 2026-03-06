@@ -136,7 +136,7 @@ function renderProjectCards() {
   if (!page.length) {
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
-        <div class="icon">🔍</div>
+        <div class="icon"></div>
         <h3>No projects found</h3>
         <p>Try adjusting your search or filters.</p>
       </div>`;
