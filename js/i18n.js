@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     'nav.projects':      'Projects',
     'nav.submit':        'Submit Project',
     'nav.about':         'About Us',
-    'nav.lang.label':    'Tiếng Việt',
+    'nav.lang.label':    'English',
     'nav.login':         'Login',
     'nav.guest':         'Guest',
 
@@ -127,7 +127,7 @@ const TRANSLATIONS = {
     'nav.projects':      'Dự Án',
     'nav.submit':        'Nộp Dự Án',
     'nav.about':         'Giới Thiệu',
-    'nav.lang.label':    'English',
+    'nav.lang.label':    'Tiếng Việt',
     'nav.login':         'Đăng Nhập',
     'nav.guest':         'Khách',
 
