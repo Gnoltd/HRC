@@ -28,9 +28,9 @@
 
     <!-- Breadcrumb -->
     <nav class="breadcrumb">
-      <a href="index.html">Home</a>
+      <a href="index.html" data-i18n="breadcrumb.home">Home</a>
       <span class="sep">›</span>
-      <a href="index.html">Projects</a>
+      <a href="index.html" data-i18n="breadcrumb.projects">Projects</a>
       <span class="sep">›</span>
       <span id="breadcrumb-title">Project Detail</span>
     </nav>
@@ -40,33 +40,33 @@
       <!-- Main Content -->
       <div class="detail-main" id="project-content">
         <div class="empty-state">
-          <h3>Loading project…</h3>
+          <h3 data-i18n="detail.loading">Loading project…</h3>
         </div>
       </div>
 
       <!-- Sidebar -->
       <aside class="detail-sidebar">
         <div class="card">
-          <h3>Related Projects</h3>
+          <h3 data-i18n="detail.related.title">Related Projects</h3>
           <div id="related-projects">
-            <p style="font-size:.85rem;color:var(--muted)">Loading…</p>
+            <p style="font-size:.85rem;color:var(--muted)" data-i18n="results.loading">Loading…</p>
           </div>
         </div>
 
         <div class="card">
-          <h3> Submit Your Project</h3>
-          <p style="font-size:.87rem; color:var(--muted); margin-bottom:.8rem">
+          <h3 data-i18n="sidebar.submit.title"> Submit Your Project</h3>
+          <p style="font-size:.87rem; color:var(--muted); margin-bottom:.8rem" data-i18n="sidebar.submit.sub">
             Have a research idea? Submit it for review and publication.
           </p>
-          <a href="submit.html" class="btn btn-primary btn-block">Submit a Project</a>
+          <a href="submit.html" class="btn btn-primary btn-block" data-i18n="sidebar.submit.btn">Submit a Project</a>
         </div>
 
         <div class="card" style="background:var(--primary); color:#fff; border:none">
-          <h3 style="border-color:var(--accent); color:#fff"> Contact</h3>
-          <p style="font-size:.87rem; opacity:.85; margin-bottom:.8rem">
+          <h3 style="border-color:var(--accent); color:#fff" data-i18n="sidebar.contact.title"> Contact</h3>
+          <p style="font-size:.87rem; opacity:.85; margin-bottom:.8rem" data-i18n="sidebar.contact.sub">
             Interested in this project? Reach out to the supervisor directly.
           </p>
-          <p style="font-size:.85rem; opacity:.9;" id="contact-hint">
+          <p style="font-size:.85rem; opacity:.9;" id="contact-hint" data-i18n="sidebar.contact.hint">
             Check the supervisor's email in the project details above.
           </p>
         </div>
@@ -76,7 +76,9 @@
   </main>
 
   <footer class="footer">
-    <p>&copy; 2026 HRC.HSB.EDU.VN - Research Projects Portal</p>
+    <p><span data-i18n="footer.text">&copy; 2026 HRC.HSB.EDU.VN - Research Projects Portal</span> &nbsp;|&nbsp;
+      <a href="admin/login.html">Admin</a>
+    </p>
   </footer>
 
   <div id="toast-container"></div>

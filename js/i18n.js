@@ -9,6 +9,8 @@ const TRANSLATIONS = {
     'nav.submit':        'Submit Project',
     'nav.about':         'About Us',
     'nav.lang.label':    'Tiếng Việt',
+    'nav.login':         'Login',
+    'nav.guest':         'Guest',
 
     /* ---- Index: Hero ---- */
     'hero.title':        'Research Projects Portal',
@@ -17,7 +19,10 @@ const TRANSLATIONS = {
     'hero.btn.submit':   'Submit a Project',
 
     /* ---- Index: Stats banner ---- */
-    'stats.loading':     'Loading stats…',
+    'stats.loading':            'Loading stats…',
+    'stats.active-projects':    'Active Projects',
+    'stats.categories':         'Categories',
+    'stats.total-downloads':    'Total Downloads',
 
     /* ---- Index: Filter bar ---- */
     'filter.search.label':       'Search',
@@ -33,10 +38,57 @@ const TRANSLATIONS = {
     'filter.sort.title':         'Title A–Z',
     'filter.reset':              'Reset',
 
+    /* ---- Results / Project grid ---- */
+    'results.loading':           'Loading…',
+    'results.found':             'projects found',
+    'results.found.zero':        '0 projects found',
+    'projects.none.title':       'No projects found',
+    'projects.none.sub':         'Try adjusting your search or filters.',
+    'projects.error.title':      'Unable to load projects',
+    'projects.error.sub':        'Could not connect to the database. Please check your Firebase configuration or try again later.',
+
+    /* ---- Project card ---- */
+    'card.view-details':         'View Details',
+    'card.download':             'Download',
+    'card.slot':                 'slot',
+    'card.slots':                'slots',
+
+    /* ---- Pagination ---- */
+    'pagination.prev':           '← Prev',
+    'pagination.next':           'Next →',
+
     /* ---- Index: CTA banner ---- */
     'cta.heading':  'Have a research project to share?',
     'cta.sub':      'Submit your project for review and let students discover your work.',
     'cta.btn':      'Submit a Project',
+
+    /* ---- Breadcrumb ---- */
+    'breadcrumb.home':           'Home',
+    'breadcrumb.projects':       'Projects',
+
+    /* ---- Detail page ---- */
+    'detail.loading':            'Loading project…',
+    'detail.not-found.title':    'Project not found',
+    'detail.not-found.back':     'Back to projects',
+    'detail.description':        'Project Description',
+    'detail.requirements':       'Requirements',
+    'detail.outcomes':           'Expected Outcomes',
+    'detail.not-specified':      'Not specified.',
+    'detail.posted':             'Posted',
+    'detail.slot':               'slot',
+    'detail.slots':              'slots',
+    'detail.download-btn':       'Download Project Info',
+    'detail.back-btn':           'Back to Projects',
+    'detail.related.title':      'Related Projects',
+    'detail.related.none':       'No related projects.',
+
+    /* ---- Detail sidebar ---- */
+    'sidebar.submit.title':      'Submit Your Project',
+    'sidebar.submit.sub':        'Have a research idea? Submit it for review and publication.',
+    'sidebar.submit.btn':        'Submit a Project',
+    'sidebar.contact.title':     'Contact',
+    'sidebar.contact.sub':       'Interested in this project? Reach out to the supervisor directly.',
+    'sidebar.contact.hint':      "Check the supervisor's email in the project details above.",
 
     /* ---- About page ---- */
     'about.hero.title':   'HSB Research Club (HRC)',
@@ -76,6 +128,8 @@ const TRANSLATIONS = {
     'nav.submit':        'Nộp Dự Án',
     'nav.about':         'Giới Thiệu',
     'nav.lang.label':    'English',
+    'nav.login':         'Đăng Nhập',
+    'nav.guest':         'Khách',
 
     /* ---- Index: Hero ---- */
     'hero.title':        'Cổng Dự Án Nghiên Cứu',
@@ -84,7 +138,10 @@ const TRANSLATIONS = {
     'hero.btn.submit':   'Nộp Dự Án',
 
     /* ---- Index: Stats banner ---- */
-    'stats.loading':     'Đang tải…',
+    'stats.loading':            'Đang tải…',
+    'stats.active-projects':    'Dự Án Đang Hoạt Động',
+    'stats.categories':         'Danh Mục',
+    'stats.total-downloads':    'Tổng Lượt Tải',
 
     /* ---- Index: Filter bar ---- */
     'filter.search.label':       'Tìm Kiếm',
@@ -100,10 +157,57 @@ const TRANSLATIONS = {
     'filter.sort.title':         'Tên A–Z',
     'filter.reset':              'Đặt Lại',
 
+    /* ---- Results / Project grid ---- */
+    'results.loading':           'Đang tải…',
+    'results.found':             'dự án được tìm thấy',
+    'results.found.zero':        '0 dự án được tìm thấy',
+    'projects.none.title':       'Không tìm thấy dự án',
+    'projects.none.sub':         'Thử điều chỉnh tìm kiếm hoặc bộ lọc.',
+    'projects.error.title':      'Không thể tải dự án',
+    'projects.error.sub':        'Không thể kết nối đến cơ sở dữ liệu. Vui lòng kiểm tra cấu hình Firebase hoặc thử lại sau.',
+
+    /* ---- Project card ---- */
+    'card.view-details':         'Xem Chi Tiết',
+    'card.download':             'Tải Xuống',
+    'card.slot':                 'suất',
+    'card.slots':                'suất',
+
+    /* ---- Pagination ---- */
+    'pagination.prev':           '← Trước',
+    'pagination.next':           'Tiếp →',
+
     /* ---- Index: CTA banner ---- */
     'cta.heading':  'Bạn có dự án nghiên cứu muốn chia sẻ?',
     'cta.sub':      'Nộp dự án để được xét duyệt và để sinh viên khám phá công trình của bạn.',
     'cta.btn':      'Nộp Dự Án',
+
+    /* ---- Breadcrumb ---- */
+    'breadcrumb.home':           'Trang Chủ',
+    'breadcrumb.projects':       'Dự Án',
+
+    /* ---- Detail page ---- */
+    'detail.loading':            'Đang tải dự án…',
+    'detail.not-found.title':    'Không tìm thấy dự án',
+    'detail.not-found.back':     'Quay lại danh sách',
+    'detail.description':        'Mô Tả Dự Án',
+    'detail.requirements':       'Yêu Cầu',
+    'detail.outcomes':           'Kết Quả Dự Kiến',
+    'detail.not-specified':      'Không có thông tin.',
+    'detail.posted':             'Đăng ngày',
+    'detail.slot':               'suất',
+    'detail.slots':              'suất',
+    'detail.download-btn':       'Tải Thông Tin Dự Án',
+    'detail.back-btn':           'Quay Lại Danh Sách',
+    'detail.related.title':      'Dự Án Liên Quan',
+    'detail.related.none':       'Không có dự án liên quan.',
+
+    /* ---- Detail sidebar ---- */
+    'sidebar.submit.title':      'Nộp Dự Án Của Bạn',
+    'sidebar.submit.sub':        'Bạn có ý tưởng nghiên cứu? Nộp để được xét duyệt và công bố.',
+    'sidebar.submit.btn':        'Nộp Dự Án',
+    'sidebar.contact.title':     'Liên Hệ',
+    'sidebar.contact.sub':       'Quan tâm đến dự án này? Liên hệ trực tiếp với giảng viên hướng dẫn.',
+    'sidebar.contact.hint':      'Xem email của giảng viên trong phần chi tiết dự án bên trên.',
 
     /* ---- About page ---- */
     'about.hero.title': 'Câu lạc bộ Nghiên cứu HSB (HRC)',
@@ -192,6 +296,8 @@ function toggleLanguage() {
   const next = getCurrentLang() === 'en' ? 'vi' : 'en';
   localStorage.setItem(LANG_KEY, next);
   applyTranslations();
+  /* Notify other scripts (e.g. main.js) to re-render dynamic content */
+  document.dispatchEvent(new CustomEvent('langchange'));
 }
 
 /* ---- Initialise on DOM ready ---- */
