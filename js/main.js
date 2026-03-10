@@ -10,6 +10,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateNavAuthLink();
 });
 
+/* Re-render dynamic content when language is toggled */
+document.addEventListener('langchange', async () => {
+  const page = document.body.dataset.page;
+  if (page === 'index') {
+    rerenderStatsBanner();
+    await loadProjects();
+  }
+  if (page === 'detail') {
+    await initDetailPage();
+  }
+});
+
 /* ---- Shared: nav auth link ---- */
 function updateNavAuthLink() {
   const userEl  = document.getElementById('nav-user-link');
@@ -17,8 +29,8 @@ function updateNavAuthLink() {
 
   auth.onAuthStateChanged(async (user) => {
     if (!user) {
-      if (userEl)  { userEl.textContent  = 'Login'; userEl.href  = 'login.html'; }
-      if (adminEl) { adminEl.textContent = 'Guest'; adminEl.href = 'login.html'; }
+      if (userEl)  { userEl.textContent  = t('nav.login'); userEl.href  = 'login.html'; }
+      if (adminEl) { adminEl.textContent = t('nav.guest'); adminEl.href = 'login.html'; }
       return;
     }
     try {
@@ -85,11 +97,11 @@ async function loadProjects() {
     if (grid) grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <div class="icon"></div>
-        <h3>Unable to load projects</h3>
-        <p>Could not connect to the database. Please check your Firebase configuration or try again later.</p>
+        <h3>${t('projects.error.title')}</h3>
+        <p>${t('projects.error.sub')}</p>
       </div>`;
     const countEl = document.getElementById('result-count');
-    if (countEl) countEl.textContent = '0 projects found';
+    if (countEl) countEl.textContent = t('results.found.zero');
     return;
   }
 
@@ -104,7 +116,7 @@ async function loadProjects() {
       (p.title || '').toLowerCase().includes(search) ||
       (p.description || '').toLowerCase().includes(search) ||
       (p.supervisor || '').toLowerCase().includes(search) ||
-      tags.some(t => t.toLowerCase().includes(search));
+      tags.some(tagItem => tagItem.toLowerCase().includes(search));
     const matchCat  = !cat  || p.category   === cat;
     const matchDept = !dept || p.department  === dept;
     return matchSearch && matchCat && matchDept;
@@ -121,7 +133,11 @@ async function loadProjects() {
 
   const total = filteredProjects.length;
   const countEl = document.getElementById('result-count');
-  if (countEl) countEl.textContent = `${total} project${total !== 1 ? 's' : ''} found`;
+  if (countEl) {
+    countEl.textContent = total > 0
+      ? `${total} ${t('results.found')}`
+      : t('results.found.zero');
+  }
 
   renderProjectCards();
   renderPagination();
@@ -137,14 +153,15 @@ function renderProjectCards() {
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1">
         <div class="icon"></div>
-        <h3>No projects found</h3>
-        <p>Try adjusting your search or filters.</p>
+        <h3>${t('projects.none.title')}</h3>
+        <p>${t('projects.none.sub')}</p>
       </div>`;
     return;
   }
 
   grid.innerHTML = page.map(p => {
     const tags = Array.isArray(p.tags) ? p.tags : [];
+    const slotsLabel = p.slots !== 1 ? t('card.slots') : t('card.slot');
     return `
     <div class="project-card">
       <div class="card-header">
@@ -155,13 +172,13 @@ function renderProjectCards() {
         <span> ${p.department}</span>
         <span> ${p.supervisor}</span>
         <span> ${p.duration}</span>
-        <span> ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
+        <span> ${p.slots} ${slotsLabel}</span>
       </div>
       <div class="card-desc">${p.description}</div>
-      <div class="card-tags">${tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-tags">${tags.map(tagItem => `<span class="tag">${tagItem}</span>`).join('')}</div>
       <div class="card-footer">
-        <a href="project-detail.html?id=${p.id}" class="btn btn-outline btn-sm">View Details</a>
-        <button class="btn btn-primary btn-sm" onclick="handleDownload('${p.id}')"> Download</button>
+        <a href="project-detail.html?id=${p.id}" class="btn btn-outline btn-sm">${t('card.view-details')}</a>
+        <button class="btn btn-primary btn-sm" onclick="handleDownload('${p.id}')"> ${t('card.download')}</button>
       </div>
     </div>`;
   }).join('');
@@ -174,11 +191,11 @@ function renderPagination() {
   if (totalPages <= 1) { pag.innerHTML = ''; return; }
 
   let html = '';
-  if (currentPage > 1) html += `<button onclick="gotoPage(${currentPage - 1})">← Prev</button>`;
+  if (currentPage > 1) html += `<button onclick="gotoPage(${currentPage - 1})">${t('pagination.prev')}</button>`;
   for (let i = 1; i <= totalPages; i++) {
     html += `<button class="${i === currentPage ? 'active' : ''}" onclick="gotoPage(${i})">${i}</button>`;
   }
-  if (currentPage < totalPages) html += `<button onclick="gotoPage(${currentPage + 1})">Next →</button>`;
+  if (currentPage < totalPages) html += `<button onclick="gotoPage(${currentPage + 1})">${t('pagination.next')}</button>`;
   pag.innerHTML = html;
 }
 
@@ -198,19 +215,31 @@ function resetFilters() {
   loadProjects();
 }
 
+/* Cached stats for re-render on language toggle */
+let cachedStats = null;
+
 async function renderStatsBanner() {
   try {
     const all  = await getApprovedProjects();
     const cats = [...new Set(all.map(p => p.category))].length;
-    const el = document.getElementById('stats-banner');
-    if (!el) return;
-    el.innerHTML = `
-      <span> <strong>${all.length}</strong> Active Projects</span>
-      <span> <strong>${cats}</strong> Categories</span>
-      <span> <strong>${all.reduce((a, p) => a + (p.downloads || 0), 0)}</strong> Total Downloads</span>`;
+    cachedStats = {
+      count: all.length,
+      cats,
+      downloads: all.reduce((a, p) => a + (p.downloads || 0), 0),
+    };
+    rerenderStatsBanner();
   } catch (err) {
     console.error('renderStatsBanner: failed —', err);
   }
+}
+
+function rerenderStatsBanner() {
+  const el = document.getElementById('stats-banner');
+  if (!el || !cachedStats) return;
+  el.innerHTML = `
+    <span> <strong>${cachedStats.count}</strong> ${t('stats.active-projects')}</span>
+    <span> <strong>${cachedStats.cats}</strong> ${t('stats.categories')}</span>
+    <span> <strong>${cachedStats.downloads}</strong> ${t('stats.total-downloads')}</span>`;
 }
 
 /* ---- Download handler ---- */
@@ -280,8 +309,8 @@ async function initDetailPage() {
     document.getElementById('project-content').innerHTML = `
       <div class="empty-state">
         <div class="icon"></div>
-        <h3>Project not found</h3>
-        <p><a href="index.html">Back to projects</a></p>
+        <h3>${t('detail.not-found.title')}</h3>
+        <p><a href="index.html">${t('detail.not-found.back')}</a></p>
       </div>`;
     return;
   }
@@ -289,6 +318,7 @@ async function initDetailPage() {
   document.title = `${p.title} — Research Projects`;
 
   document.getElementById('breadcrumb-title').textContent = p.title;
+  const slotsLabel = p.slots !== 1 ? t('detail.slots') : t('detail.slot');
   document.getElementById('project-content').innerHTML = `
     <div class="project-detail-header">
       <div class="flex gap-1 mb-1 flex-wrap">
@@ -300,30 +330,30 @@ async function initDetailPage() {
         <span> <strong>${p.supervisor}</strong></span>
         <span> <a href="mailto:${p.email}">${p.email}</a></span>
         <span> ${p.duration}</span>
-        <span> ${p.slots} slot${p.slots !== 1 ? 's' : ''}</span>
-        <span> Posted ${formatDate(p.submittedAt)}</span>
+        <span> ${p.slots} ${slotsLabel}</span>
+        <span> ${t('detail.posted')} ${formatDate(p.submittedAt)}</span>
       </div>
-      <div class="card-tags">${(Array.isArray(p.tags) ? p.tags : []).map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="card-tags">${(Array.isArray(p.tags) ? p.tags : []).map(tagItem => `<span class="tag">${tagItem}</span>`).join('')}</div>
     </div>
 
     <div class="section-block">
-      <h2>Project Description</h2>
+      <h2>${t('detail.description')}</h2>
       <p>${p.description}</p>
     </div>
 
     <div class="section-block">
-      <h2>Requirements</h2>
-      <p>${p.requirements || 'Not specified.'}</p>
+      <h2>${t('detail.requirements')}</h2>
+      <p>${p.requirements || t('detail.not-specified')}</p>
     </div>
 
     <div class="section-block">
-      <h2>Expected Outcomes</h2>
-      <p>${p.outcomes || 'Not specified.'}</p>
+      <h2>${t('detail.outcomes')}</h2>
+      <p>${p.outcomes || t('detail.not-specified')}</p>
     </div>
 
     <div class="flex gap-1 flex-wrap mt-3">
-      <button class="btn btn-primary" onclick="handleDownload('${p.id}')">Download Project Info</button>
-      <a href="index.html" class="btn btn-outline">Back to Projects</a>
+      <button class="btn btn-primary" onclick="handleDownload('${p.id}')">${t('detail.download-btn')}</button>
+      <a href="index.html" class="btn btn-outline">${t('detail.back-btn')}</a>
     </div>`;
 
   // Related projects sidebar
@@ -337,7 +367,7 @@ async function initDetailPage() {
           <span style="font-size:.8rem; color:var(--muted);">${r.supervisor}</span>
         </div>`).join('');
     } else {
-      relEl.innerHTML = '<p style="font-size:.85rem; color:var(--muted);">No related projects.</p>';
+      relEl.innerHTML = `<p style="font-size:.85rem; color:var(--muted);">${t('detail.related.none')}</p>`;
     }
   }
 }
@@ -441,7 +471,7 @@ async function handleSubmitProject(e) {
 }
 
 async function persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName }) {
-  const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+  const tags = tagsRaw ? tagsRaw.split(',').map(tagItem => tagItem.trim()).filter(Boolean) : [];
   const project = {
     id: generateId(),
     title, category: cat, department: dept,
@@ -462,3 +492,4 @@ function showSuccessScreen() {
   if (wrap) wrap.classList.add('hidden');
   if (success) success.classList.remove('hidden');
 }
+
