@@ -125,9 +125,10 @@
     </a>
     <button class="navbar-toggler" aria-label="Toggle navigation" onclick="document.getElementById('main-nav').classList.toggle('open')">&#9776;</button>
     <ul class="navbar-nav" id="main-nav">
-      <li><a href="index.html">Projects</a></li>
-      <li><a href="submit.html">Submit Project</a></li>
-      <li><a href="about.html" class="active">About Us</a></li>
+      <li><a href="index.html" data-i18n="nav.projects">Projects</a></li>
+      <li><a href="submit.html" data-i18n="nav.submit">Submit Project</a></li>
+      <li><a href="about.html" class="active" data-i18n="nav.about">About Us</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="toggleLanguage()">Tiếng Việt</button></li>
       <li><a href="login.html" id="nav-user-link" class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.5)">Guest</a></li>
       <li><a href="login.html" id="nav-admin-link" class="btn btn-accent btn-sm">Guest</a></li>
     </ul>
@@ -135,8 +136,8 @@
 
   <!-- Hero -->
   <section class="about-hero">
-    <h1>HSB Research Club (HRC)</h1>
-    <p>Xây dựng chương trình nghiên cứu sinh viên đẳng cấp quốc tế, hỗ trợ mục tiêu AACSB và định vị HSB trong top 100 trường kinh doanh châu Á.</p>
+    <h1 data-i18n="about.hero.title">HSB Research Club (HRC)</h1>
+    <p data-i18n="about.hero.sub">Xây dựng chương trình nghiên cứu sinh viên đẳng cấp quốc tế, hỗ trợ mục tiêu AACSB và định vị HSB trong top 100 trường kinh doanh châu Á.</p>
   </section>
 
   <!-- Main Content -->
@@ -144,53 +145,53 @@
 
     <!-- Hướng Dẫn Nghiên Cứu Sinh Viên -->
     <div class="about-section">
-      <h2>Định Hướng Phát Triển Nghiên Cứu Cho Sinh Viên</h2>
+      <h2 data-i18n="about.section1.title">Định Hướng Phát Triển Nghiên Cứu Cho Sinh Viên</h2>
 
-      <!-- 1. Tại sao -->
-      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.2rem 0 .6rem;">1. Tại sao nên tham gia nghiên cứu</h3>
+      <!-- 1. Why -->
+      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.2rem 0 .6rem;" data-i18n="about.s1.why.title">1. Tại sao nên tham gia nghiên cứu</h3>
       <div class="stat-highlight">
         <div class="stat-highlight-card">
           <div class="stat-num">x2</div>
-          <div class="stat-desc">Tỷ lệ tốt nghiệp cao gấp 2 lần so với sinh viên không nghiên cứu</div>
+          <div class="stat-desc" data-i18n="about.stat1">Tỷ lệ tốt nghiệp cao gấp 2 lần so với sinh viên không nghiên cứu</div>
         </div>
         <div class="stat-highlight-card">
           <div class="stat-num">x1.8</div>
-          <div class="stat-desc">Khả năng học cao học cao gấp 1.8 lần</div>
+          <div class="stat-desc" data-i18n="about.stat2">Khả năng học cao học cao gấp 1.8 lần</div>
         </div>
         <div class="stat-highlight-card">
           <div class="stat-num">87%</div>
-          <div class="stat-desc">Nhà tuyển dụng ưu tiên ứng viên có kinh nghiệm nghiên cứu</div>
+          <div class="stat-desc" data-i18n="about.stat3">Nhà tuyển dụng ưu tiên ứng viên có kinh nghiệm nghiên cứu</div>
         </div>
         <div class="stat-highlight-card">
           <div class="stat-num">93%</div>
-          <div class="stat-desc">Sinh viên MIT tham gia nghiên cứu trước khi tốt nghiệp</div>
+          <div class="stat-desc" data-i18n="about.stat4">Sinh viên MIT tham gia nghiên cứu trước khi tốt nghiệp</div>
         </div>
       </div>
 
-      <!-- 2. Lợi ích -->
-      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.5rem 0 .6rem;">2. Lợi ích cụ thể</h3>
+      <!-- 2. Benefits -->
+      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.5rem 0 .6rem;" data-i18n="about.s1.benefits.title">2. Lợi ích cụ thể</h3>
       <ol>
-        <li><strong>Đồng tác giả xuất bản:</strong> Trở thành co-author trên các bài báo khoa học.</li>
-        <li><strong>Chuẩn bị cao học:</strong> Yếu tố quyết định nhất cho MBA/PhD.</li>
-        <li><strong>CV nổi bật hơn trong mắt nhà tuyển dụng:</strong> 87% các nhà tuyển dụng cho rằng họ cần ứng viên với kinh nghiệm nghiên cứu.</li>
-        <li><strong>Kỹ năng tư duy:</strong> 80% nhà tuyển dụng cho rằng họ cần cử nhân có kỹ năng viết và thuyết trình tốt, trong khi 79% muốn sinh viên đã hoàn thiện một vài dự án thật.</li>
-        <li><strong>Mạng lưới quan hệ:</strong> Thư giới thiệu từ giáo sư.</li>
+        <li data-i18n-html="about.b1"><strong>Đồng tác giả xuất bản:</strong> Trở thành co-author trên các bài báo khoa học.</li>
+        <li data-i18n-html="about.b2"><strong>Chuẩn bị cao học:</strong> Yếu tố quyết định nhất cho MBA/PhD.</li>
+        <li data-i18n-html="about.b3"><strong>CV nổi bật hơn trong mắt nhà tuyển dụng:</strong> 87% các nhà tuyển dụng cho rằng họ cần ứng viên với kinh nghiệm nghiên cứu.</li>
+        <li data-i18n-html="about.b4"><strong>Kỹ năng tư duy:</strong> 80% nhà tuyển dụng cho rằng họ cần cử nhân có kỹ năng viết và thuyết trình tốt, trong khi 79% muốn sinh viên đã hoàn thiện một vài dự án thật.</li>
+        <li data-i18n-html="about.b5"><strong>Mạng lưới quan hệ:</strong> Thư giới thiệu từ giáo sư.</li>
       </ol>
 
-      <!-- 3. Lộ trình -->
-      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.5rem 0 .6rem;">3. Lộ trình cụ thể</h3>
+      <!-- 3. Roadmap -->
+      <h3 style="font-size:1.05rem; color:var(--primary); margin: 1.5rem 0 .6rem;" data-i18n="about.s1.roadmap.title">3. Lộ trình cụ thể</h3>
       <div class="roadmap">
         <div class="roadmap-step">
-          <div class="step-label">Năm 1 – 2</div>
-          <p>Học phương pháp nghiên cứu, tìm giảng viên phù hợp, làm trợ lý nghiên cứu cơ bản.</p>
+          <div class="step-label" data-i18n="about.road1.label">Năm 1 – 2</div>
+          <p data-i18n="about.road1.text">Học phương pháp nghiên cứu, tìm giảng viên phù hợp, làm trợ lý nghiên cứu cơ bản.</p>
         </div>
         <div class="roadmap-step">
-          <div class="step-label">Năm 3</div>
-          <p>Phân tích dữ liệu, viết phần literature review, đề xuất ý tưởng mở rộng.</p>
+          <div class="step-label" data-i18n="about.road2.label">Năm 3</div>
+          <p data-i18n="about.road2.text">Phân tích dữ liệu, viết phần literature review, đề xuất ý tưởng mở rộng.</p>
         </div>
         <div class="roadmap-step">
-          <div class="step-label">Năm 4</div>
-          <p>Khóa luận độc lập, trình bày hội thảo, chuẩn bị xuất bản.</p>
+          <div class="step-label" data-i18n="about.road3.label">Năm 4</div>
+          <p data-i18n="about.road3.text">Khóa luận độc lập, trình bày hội thảo, chuẩn bị xuất bản.</p>
         </div>
       </div>
     </div>
@@ -198,7 +199,7 @@
   </main>
 
   <footer class="footer">
-    <p>&copy; 2026 HRC.HSB.EDU.VN - Research Projects Portal &nbsp;|&nbsp;
+    <p><span data-i18n="footer.text">&copy; 2026 HRC.HSB.EDU.VN - Research Projects Portal</span> &nbsp;|&nbsp;
       <a href="admin/login.html">Admin</a>
     </p>
   </footer>
@@ -209,5 +210,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/i18n.js"></script>
 </body>
 </html>
+

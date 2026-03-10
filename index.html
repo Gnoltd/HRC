@@ -15,9 +15,10 @@
     </a>
     <button class="navbar-toggler" id="nav-toggler" aria-label="Toggle navigation" onclick="document.getElementById('main-nav').classList.toggle('open')">&#9776;</button>
     <ul class="navbar-nav" id="main-nav">
-      <li><a href="index.html" class="active">Projects</a></li>
-      <li><a href="submit.html">Submit Project</a></li>
-      <li><a href="about.html">About Us</a></li>
+      <li><a href="index.html" class="active" data-i18n="nav.projects">Projects</a></li>
+      <li><a href="submit.html" data-i18n="nav.submit">Submit Project</a></li>
+      <li><a href="about.html" data-i18n="nav.about">About Us</a></li>
+      <li><button id="lang-toggle" class="lang-toggle" onclick="toggleLanguage()">Tiếng Việt</button></li>
       <li><a href="login.html" id="nav-user-link" class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.5)">Guest</a></li>
       <li><a href="login.html" id="nav-admin-link" class="btn btn-accent btn-sm">Guest</a></li>
     </ul>
@@ -25,11 +26,11 @@
 
   <!-- Hero -->
   <section class="hero">
-    <h1>Research Projects Portal</h1>
-    <p>Discover, explore, and connect with cutting-edge research opportunities across all disciplines.</p>
+    <h1 data-i18n="hero.title">Research Projects Portal</h1>
+    <p data-i18n="hero.subtitle">Discover, explore, and connect with cutting-edge research opportunities across all disciplines.</p>
     <div class="hero-actions">
-      <a href="#projects" class="btn btn-accent btn-lg"> Browse Projects</a>
-      <a href="submit.html"  class="btn btn-outline btn-lg" style="color:#fff;border-color:#fff"> Submit a Project</a>
+      <a href="about.html" class="btn btn-accent btn-lg" data-i18n="hero.btn.about"> About Us</a>
+      <a href="submit.html" class="btn btn-outline btn-lg" style="color:#fff;border-color:#fff" data-i18n="hero.btn.submit"> Submit a Project</a>
     </div>
   </section>
 
@@ -37,7 +38,7 @@
   <div style="background:var(--primary-light); color:#fff; padding:.6rem 0;">
     <div class="container">
       <div class="stats-bar" id="stats-banner" style="color:#fff">
-        <span>Loading stats…</span>
+        <span data-i18n="stats.loading">Loading stats…</span>
       </div>
     </div>
   </div>
@@ -48,31 +49,31 @@
     <!-- Filter Bar -->
     <div class="filter-bar">
       <div class="filter-group filter-group-wide">
-        <label for="search">Search</label>
-        <input type="text" id="search" class="form-control" placeholder="Keywords, supervisor name, tags…" />
+        <label for="search" data-i18n="filter.search.label">Search</label>
+        <input type="text" id="search" class="form-control" placeholder="Keywords, supervisor name, tags…" data-i18n-placeholder="filter.search.placeholder" />
       </div>
       <div class="filter-group">
-        <label for="cat-filter">Category</label>
+        <label for="cat-filter" data-i18n="filter.category.label">Category</label>
         <select id="cat-filter" class="form-control">
-          <option value="">All Categories</option>
+          <option value="" data-i18n="filter.category.all">All Categories</option>
         </select>
       </div>
       <div class="filter-group">
-        <label for="dept-filter">Department</label>
+        <label for="dept-filter" data-i18n="filter.dept.label">Department</label>
         <select id="dept-filter" class="form-control">
-          <option value="">All Departments</option>
+          <option value="" data-i18n="filter.dept.all">All Departments</option>
         </select>
       </div>
       <div class="filter-group">
-        <label for="sort-filter">Sort By</label>
+        <label for="sort-filter" data-i18n="filter.sort.label">Sort By</label>
         <select id="sort-filter" class="form-control">
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-          <option value="downloads">Most Downloaded</option>
-          <option value="title">Title A–Z</option>
+          <option value="newest" data-i18n="filter.sort.newest">Newest First</option>
+          <option value="oldest" data-i18n="filter.sort.oldest">Oldest First</option>
+          <option value="downloads" data-i18n="filter.sort.downloads">Most Downloaded</option>
+          <option value="title" data-i18n="filter.sort.title">Title A–Z</option>
         </select>
       </div>
-      <button class="btn btn-outline" id="reset-filters">Reset</button>
+      <button class="btn btn-outline" id="reset-filters" data-i18n="filter.reset">Reset</button>
     </div>
 
     <!-- Stats row -->
@@ -93,14 +94,14 @@
   <!-- CTA Banner -->
   <section style="background:var(--primary); color:#fff; padding:2.5rem 0; text-align:center;">
     <div class="container">
-      <h2 style="margin-bottom:.5rem;">Have a research project to share?</h2>
-      <p style="opacity:.85; margin-bottom:1.2rem;">Submit your project for review and let students discover your work.</p>
-      <a href="submit.html" class="btn btn-accent btn-lg"> Submit a Project</a>
+      <h2 style="margin-bottom:.5rem;" data-i18n="cta.heading">Have a research project to share?</h2>
+      <p style="opacity:.85; margin-bottom:1.2rem;" data-i18n="cta.sub">Submit your project for review and let students discover your work.</p>
+      <a href="submit.html" class="btn btn-accent btn-lg" data-i18n="cta.btn"> Submit a Project</a>
     </div>
   </section>
 
   <footer class="footer">
-    <p>&copy; 2026 HRC.HSB.EDU.VN - Research Projects Portal &nbsp;|&nbsp;
+    <p><span data-i18n="footer.text">&copy; 2026 HRC.HSB.EDU.VN - Research Projects Portal</span> &nbsp;|&nbsp;
       <a href="admin/login.html">Admin</a>
     </p>
   </footer>
@@ -114,6 +115,8 @@
   <script src="js/firebase-config.js"></script>
   <script src="js/data.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
+
