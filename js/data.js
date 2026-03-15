@@ -56,6 +56,55 @@ async function incrementDownload(id) {
   await db.ref('projects/' + id + '/downloads').transaction(current => (current || 0) + 1);
 }
 
+/* ---- Availability Status ---- */
+
+function getAvailabilityLabel(status) {
+  if (status === 'full')     return '🟡 Full';
+  if (status === 'finished') return '🔴 Finished';
+  return '🟢 Available';
+}
+
+function getAvailabilityClass(status) {
+  if (status === 'full')     return 'avail-full';
+  if (status === 'finished') return 'avail-finished';
+  return 'avail-available';
+}
+
+async function updateProjectAvailability(id, availabilityStatus) {
+  if (!db) throw dbError();
+  await db.ref('projects/' + id).update({ availabilityStatus });
+}
+
+async function requestProjectFinish(id) {
+  if (!db) throw dbError();
+  await db.ref('projects/' + id).update({
+    finishRequested: true,
+    finishRequestedAt: new Date().toISOString(),
+  });
+}
+
+async function approveFinishRequest(id) {
+  if (!db) throw dbError();
+  await db.ref('projects/' + id).update({
+    availabilityStatus: 'finished',
+    finishRequested: false,
+    finishRequestedAt: null,
+  });
+}
+
+async function rejectFinishRequest(id) {
+  if (!db) throw dbError();
+  await db.ref('projects/' + id).update({
+    finishRequested: false,
+    finishRequestedAt: null,
+  });
+}
+
+async function getFinishRequestedProjects() {
+  const all = await getAllProjects();
+  return all.filter(p => p.status === 'approved' && p.finishRequested === true);
+}
+
 function generateId() {
   return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
 }
