@@ -98,6 +98,7 @@ async function initDashboardPage() {
   await renderDashboardStats();
   await renderRecentPending();
   await renderRecentApproved();
+  await renderFinishRequestsTable();
 }
 
 function renderAdminMeta() {
@@ -212,6 +213,7 @@ async function quickApprove(id) {
   if (!p) return;
   p.status = 'approved';
   p.reviewedAt = new Date().toISOString();
+  if (!p.availabilityStatus) p.availabilityStatus = 'available';
   await saveProject(p);
   showToast('Project approved!', 'success');
   await renderPendingTable();
@@ -261,7 +263,7 @@ async function renderAllTable() {
   if (!tbody) return;
 
   if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding:2rem">No projects match your filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted" style="padding:2rem">No projects match your filters</td></tr>`;
     return;
   }
 
@@ -273,6 +275,7 @@ async function renderAllTable() {
       <td>${p.category}</td>
       <td>${p.supervisor}</td>
       <td><span class="badge ${p.status === 'approved' ? 'badge-success' : p.status === 'rejected' ? 'badge-danger' : 'badge-warning'}">${p.status}</span></td>
+      <td>${p.status === 'approved' ? renderAvailBadge(p) : '—'}</td>
       <td>${formatDate(p.submittedAt)}</td>
       <td class="actions">
         <a href="review.html?id=${p.id}" class="btn btn-outline btn-sm"> Detail</a>
@@ -287,6 +290,7 @@ async function adminApprove(id) {
   const p = await getProjectById(id);
   if (!p) return;
   p.status = 'approved'; p.reviewedAt = new Date().toISOString();
+  if (!p.availabilityStatus) p.availabilityStatus = 'available';
   await saveProject(p); showToast('Approved!', 'success'); await renderAllTable();
 }
 
@@ -320,6 +324,8 @@ async function initReviewPage() {
 
 function renderReviewDetail(p) {
   const statusBadge = `<span class="badge ${p.status === 'approved' ? 'badge-success' : p.status === 'rejected' ? 'badge-danger' : 'badge-warning'}">${p.status.toUpperCase()}</span>`;
+  const avail = p.availabilityStatus || 'available';
+  const availBadge = p.status === 'approved' ? renderAvailBadge(p) : '';
 
   const el = document.getElementById('review-content');
   if (!el) return;
@@ -328,6 +334,7 @@ function renderReviewDetail(p) {
       <div class="flex gap-1 mb-1 flex-wrap align-center">
         <span class="card-category">${p.category}</span>
         ${statusBadge}
+        ${availBadge}
       </div>
       <h1>${p.title}</h1>
       <div class="meta-row">
@@ -377,6 +384,7 @@ function setupReviewActions(p) {
       p.status = 'approved';
       p.reviewedAt = new Date().toISOString();
       p.reviewNote = noteEl?.value?.trim() || '';
+      if (!p.availabilityStatus) p.availabilityStatus = 'available';
       await saveProject(p);
       showToast('Project approved and published!', 'success');
       setTimeout(() => window.location.href = 'pending.html', 1200);
@@ -405,6 +413,11 @@ function setupReviewActions(p) {
       setTimeout(() => window.location.href = 'all-projects.html', 1000);
     });
   }
+
+  // Availability controls (only for approved projects)
+  if (p.status === 'approved') {
+    renderAdminAvailabilityPanel(p);
+  }
 }
 
 /* ---- Logout ---- */
@@ -412,6 +425,91 @@ function handleLogout() {
   authSignOut().then(() => {
     window.location.href = 'login.html';
   });
+}
+
+/* ---- Availability badge helper ---- */
+function renderAvailBadge(p) {
+  const avail = p.availabilityStatus || 'available';
+  const label = getAvailabilityLabel(avail);
+  const cls   = getAvailabilityClass(avail);
+  const extra = p.finishRequested ? ' <small style="color:#856404">(finish requested)</small>' : '';
+  return `<span class="avail-badge ${cls}">${label}</span>${extra}`;
+}
+
+/* ===================================================
+   FINISH REQUESTS (Dashboard)
+   =================================================== */
+async function renderFinishRequestsTable() {
+  const list = await getFinishRequestedProjects();
+  const section = document.getElementById('finish-requests-section');
+  const tbody   = document.getElementById('finish-requests-tbody');
+  const badge   = document.getElementById('finish-requests-count');
+  if (badge) badge.textContent = list.length || '';
+  if (!tbody) return;
+  if (section) section.classList.toggle('hidden', list.length === 0);
+
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted" style="padding:1.5rem">No pending finish requests.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(p => `
+    <tr>
+      <td><a href="review.html?id=${p.id}" style="font-weight:600">${p.title}</a></td>
+      <td>${p.supervisor}</td>
+      <td>${renderAvailBadge(p)}</td>
+      <td>${formatDate(p.finishRequestedAt)}</td>
+      <td class="actions">
+        <button class="btn btn-success btn-sm" onclick="adminApproveFinish('${p.id}')">Approve Finish</button>
+        <button class="btn btn-danger btn-sm"  onclick="adminRejectFinish('${p.id}')">Reject</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function adminApproveFinish(id) {
+  if (!confirm('Mark this project as Finished?')) return;
+  await approveFinishRequest(id);
+  showToast('Project marked as Finished.', 'success');
+  await renderFinishRequestsTable();
+  await renderDashboardStats();
+}
+
+async function adminRejectFinish(id) {
+  await rejectFinishRequest(id);
+  showToast('Finish request rejected.', 'warning');
+  await renderFinishRequestsTable();
+}
+
+/* ---- Admin availability panel (review page) ---- */
+function renderAdminAvailabilityPanel(p) {
+  const wrap = document.getElementById('admin-availability-wrap');
+  if (!wrap) return;
+  const avail = p.availabilityStatus || 'available';
+  wrap.innerHTML = `
+    <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border);">
+      <h3 style="font-size:.9rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; margin-bottom:.6rem;">Availability Status</h3>
+      <p style="font-size:.82rem; color:var(--muted); margin-bottom:.6rem">Current: ${renderAvailBadge(p)}</p>
+      ${p.finishRequested ? `<div class="alert alert-warning" style="font-size:.82rem;margin-bottom:.6rem">⚠ Publisher has requested to mark this project as <strong>Finished</strong>.</div>` : ''}
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <button class="btn btn-sm btn-avail-available" onclick="adminSetAvailability('${p.id}','available')" ${avail === 'available' ? 'disabled' : ''}>🟢 Set Available</button>
+        <button class="btn btn-sm btn-avail-full"      onclick="adminSetAvailability('${p.id}','full')"      ${avail === 'full'      ? 'disabled' : ''}>🟡 Set Full</button>
+        <button class="btn btn-sm btn-avail-finished"  onclick="adminSetAvailability('${p.id}','finished')"  ${avail === 'finished'  ? 'disabled' : ''}>🔴 Set Finished</button>
+      </div>
+    </div>`;
+}
+
+async function adminSetAvailability(id, newStatus) {
+  try {
+    await updateProjectAvailability(id, newStatus);
+    if (newStatus === 'finished') {
+      // Clear any finish request when admin directly sets finished
+      await rejectFinishRequest(id);
+    }
+    showToast('Availability updated.', 'success');
+    const p = await getProjectById(id);
+    if (p) renderAdminAvailabilityPanel(p);
+  } catch (err) {
+    showToast(err.message || 'Failed to update.', 'error');
+  }
 }
 
 /* ===================================================
