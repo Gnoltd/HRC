@@ -266,7 +266,7 @@ const TRANSLATIONS = {
 
     /* ---- Availability Status ---- */
     'avail.label':              'Trạng Thái',
-    'avail.available':          '🟢 Còn Chỗ',
+    'avail.available':          '🟢 Còn Trống',
     'avail.full':               '🟡 Đầy',
     'avail.finished':           '🔴 Hoàn Thành',
     'avail.requested':          '🟡 Đề Xuất Hoàn Thành',
