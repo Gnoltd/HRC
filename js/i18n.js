@@ -120,6 +120,30 @@ const TRANSLATIONS = {
 
     /* ---- Footer ---- */
     'footer.text': '© 2026 HRC.HSB.EDU.VN - Research Projects Portal',
+
+    /* ---- Availability Status ---- */
+    'avail.label':              'Availability',
+    'avail.available':          '🟢 Available',
+    'avail.full':               '🟡 Full',
+    'avail.finished':           '🔴 Finished',
+    'avail.requested':          '🟡 Finish Requested',
+    'avail.set-available':      'Set Available',
+    'avail.set-full':           'Set Full',
+    'avail.set-finished':       'Set Finished',
+    'avail.request-finish':     'Request Finish',
+    'avail.panel-title':        'Update Availability',
+    'avail.panel-hint-owner':   'You can update the availability status of your project. To mark it as Finished, submit a request for admin approval.',
+    'avail.panel-hint-admin':   'As admin you can set the availability status directly.',
+    'avail.confirm-finish':     'Mark this project as Finished? This requires admin approval.',
+    'avail.confirm-finish-admin': 'Mark this project as Finished?',
+    'avail.toast-updated':      'Availability updated.',
+    'avail.toast-requested':    'Finish request submitted. Awaiting admin approval.',
+    'avail.toast-approved':     'Project marked as Finished.',
+    'avail.toast-rejected':     'Finish request rejected.',
+    'avail.finish-requests':    'Pending Finish Requests',
+    'avail.approve':            'Approve Finish',
+    'avail.reject':             'Reject',
+    'avail.no-requests':        'No pending finish requests.',
   },
 
   vi: {
@@ -239,6 +263,30 @@ const TRANSLATIONS = {
 
     /* ---- Footer ---- */
     'footer.text': '© 2026 HRC.HSB.EDU.VN - Cổng Dự Án Nghiên Cứu',
+
+    /* ---- Availability Status ---- */
+    'avail.label':              'Trạng Thái',
+    'avail.available':          '🟢 Còn Chỗ',
+    'avail.full':               '🟡 Đầy',
+    'avail.finished':           '🔴 Hoàn Thành',
+    'avail.requested':          '🟡 Đề Xuất Hoàn Thành',
+    'avail.set-available':      'Đặt Còn Chỗ',
+    'avail.set-full':           'Đặt Đầy',
+    'avail.set-finished':       'Đặt Hoàn Thành',
+    'avail.request-finish':     'Yêu Cầu Hoàn Thành',
+    'avail.panel-title':        'Cập Nhật Trạng Thái',
+    'avail.panel-hint-owner':   'Bạn có thể cập nhật trạng thái dự án. Để đánh dấu Hoàn Thành, hãy gửi yêu cầu để admin phê duyệt.',
+    'avail.panel-hint-admin':   'Là admin, bạn có thể đặt trạng thái trực tiếp.',
+    'avail.confirm-finish':     'Đánh dấu dự án này là Hoàn Thành? Cần admin phê duyệt.',
+    'avail.confirm-finish-admin': 'Đánh dấu dự án này là Hoàn Thành?',
+    'avail.toast-updated':      'Đã cập nhật trạng thái.',
+    'avail.toast-requested':    'Đã gửi yêu cầu hoàn thành. Đang chờ admin phê duyệt.',
+    'avail.toast-approved':     'Dự án đã được đánh dấu Hoàn Thành.',
+    'avail.toast-rejected':     'Yêu cầu hoàn thành bị từ chối.',
+    'avail.finish-requests':    'Yêu Cầu Hoàn Thành Đang Chờ',
+    'avail.approve':            'Phê Duyệt',
+    'avail.reject':             'Từ Chối',
+    'avail.no-requests':        'Không có yêu cầu hoàn thành đang chờ.',
   }
 };
 

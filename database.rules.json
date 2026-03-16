@@ -3,7 +3,7 @@
     "projects": {
       ".read": true,
       "$projectId": {
-        ".write": "(!data.exists() && newData.child('status').val() === 'pending') || (auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin' && root.child('users').child(auth.uid).child('status').val() === 'approved')",
+        ".write": "(!data.exists() && newData.child('status').val() === 'pending') || (auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin' && root.child('users').child(auth.uid).child('status').val() === 'approved') || (auth != null && data.exists() && data.child('status').val() === 'approved' && data.child('submittedBy').val() === auth.uid && newData.child('status').val() === data.child('status').val() && newData.child('submittedBy').val() === data.child('submittedBy').val())",
         "downloads": {
           ".write": "data.parent().exists() && newData.isNumber() && newData.val() >= (data.val() === null ? 0 : data.val())"
         }

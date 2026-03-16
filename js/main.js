@@ -162,10 +162,13 @@ function renderProjectCards() {
   grid.innerHTML = page.map(p => {
     const tags = Array.isArray(p.tags) ? p.tags : [];
     const slotsLabel = p.slots !== 1 ? t('card.slots') : t('card.slot');
+    const avail = p.availabilityStatus || 'available';
+    const availBadge = `<span class="avail-badge ${getAvailabilityClass(avail)}">${t('avail.' + avail)}</span>`;
     return `
     <div class="project-card">
       <div class="card-header">
         <span class="card-category">${p.category}</span>
+        ${availBadge}
       </div>
       <div class="card-title"><a href="project-detail.html?id=${p.id}">${p.title}</a></div>
       <div class="card-meta">
@@ -319,11 +322,15 @@ async function initDetailPage() {
 
   document.getElementById('breadcrumb-title').textContent = p.title;
   const slotsLabel = p.slots !== 1 ? t('detail.slots') : t('detail.slot');
+  const avail = p.availabilityStatus || 'available';
+  const availBadge = `<span class="avail-badge ${getAvailabilityClass(avail)}">${t('avail.' + avail)}${p.finishRequested ? ' (' + t('avail.requested') + ')' : ''}</span>`;
+
   document.getElementById('project-content').innerHTML = `
     <div class="project-detail-header">
       <div class="flex gap-1 mb-1 flex-wrap">
         <span class="card-category">${p.category}</span>
         <span class="badge badge-secondary">${p.department}</span>
+        ${availBadge}
       </div>
       <h1>${p.title}</h1>
       <div class="meta-row">
@@ -351,10 +358,15 @@ async function initDetailPage() {
       <p>${p.outcomes || t('detail.not-specified')}</p>
     </div>
 
+    <div id="availability-panel-wrap"></div>
+
     <div class="flex gap-1 flex-wrap mt-3">
       <button class="btn btn-primary" onclick="handleDownload('${p.id}')">${t('detail.download-btn')}</button>
       <a href="index.html" class="btn btn-outline">${t('detail.back-btn')}</a>
     </div>`;
+
+  // Render availability control panel if the user is the owner or admin
+  await renderAvailabilityPanel(p);
 
   // Related projects sidebar
   const related = (await getApprovedProjects()).filter(r => r.id !== p.id && r.category === p.category).slice(0, 3);
@@ -369,6 +381,78 @@ async function initDetailPage() {
     } else {
       relEl.innerHTML = `<p style="font-size:.85rem; color:var(--muted);">${t('detail.related.none')}</p>`;
     }
+  }
+}
+
+async function renderAvailabilityPanel(p) {
+  const wrap = document.getElementById('availability-panel-wrap');
+  if (!wrap) return;
+
+  const user = auth.currentUser;
+  if (!user) return; // Not logged in; no controls shown
+
+  let userProfile = null;
+  try { userProfile = await getUserProfile(user.uid); } catch (_) {}
+
+  const isAdmin  = userProfile && userProfile.role === 'admin' && userProfile.status === 'approved';
+  const isOwner  = p.submittedBy && p.submittedBy === user.uid;
+
+  if (!isAdmin && !isOwner) return; // Not authorised to change status
+
+  const avail = p.availabilityStatus || 'available';
+
+  let buttonsHtml = '';
+  if (isAdmin) {
+    // Admin can set any status directly
+    buttonsHtml = `
+      <button class="btn btn-sm btn-avail-available${avail === 'available' ? ' btn-active' : ''}" onclick="ownerSetAvailability('${p.id}','available')" ${avail === 'available' ? 'disabled' : ''}>${t('avail.set-available')}</button>
+      <button class="btn btn-sm btn-avail-full${avail === 'full' ? ' btn-active' : ''}" onclick="ownerSetAvailability('${p.id}','full')" ${avail === 'full' ? 'disabled' : ''}>${t('avail.set-full')}</button>
+      <button class="btn btn-sm btn-avail-finished${avail === 'finished' ? ' btn-active' : ''}" onclick="ownerSetAvailability('${p.id}','finished')" ${avail === 'finished' ? 'disabled' : ''}>${t('avail.set-finished')}</button>`;
+  } else {
+    // Owner can toggle Available/Full and request Finish
+    if (avail === 'finished') {
+      buttonsHtml = `<span class="avail-finished-msg">${t('avail.finished')} — This project has been marked as finished and cannot be changed.</span>`;
+    } else if (p.finishRequested) {
+      buttonsHtml = `
+        <button class="btn btn-sm btn-avail-available" onclick="ownerSetAvailability('${p.id}','available')">${t('avail.set-available')}</button>
+        <button class="btn btn-sm btn-avail-full" onclick="ownerSetAvailability('${p.id}','full')">${t('avail.set-full')}</button>
+        <span class="avail-badge avail-requested" style="margin-left:.4rem">${t('avail.requested')}</span>`;
+    } else {
+      buttonsHtml = `
+        <button class="btn btn-sm btn-avail-available" onclick="ownerSetAvailability('${p.id}','available')" ${avail === 'available' ? 'disabled' : ''}>${t('avail.set-available')}</button>
+        <button class="btn btn-sm btn-avail-full" onclick="ownerSetAvailability('${p.id}','full')" ${avail === 'full' ? 'disabled' : ''}>${t('avail.set-full')}</button>
+        <button class="btn btn-sm btn-avail-request" onclick="ownerRequestFinish('${p.id}')">${t('avail.request-finish')}</button>`;
+    }
+  }
+
+  wrap.innerHTML = `
+    <div class="availability-panel">
+      <h4>${t('avail.panel-title')}</h4>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:.7rem">${isAdmin ? t('avail.panel-hint-admin') : t('avail.panel-hint-owner')}</p>
+      <div class="availability-btn-row">${buttonsHtml}</div>
+    </div>`;
+}
+
+async function ownerSetAvailability(id, newStatus) {
+  try {
+    await updateProjectAvailability(id, newStatus);
+    // Always clear any pending finish request when status is changed directly
+    await rejectFinishRequest(id);
+    showToast(t('avail.toast-updated'), 'success');
+    await initDetailPage();
+  } catch (err) {
+    showToast(err.message || 'Failed to update status.', 'error');
+  }
+}
+
+async function ownerRequestFinish(id) {
+  if (!confirm(t('avail.confirm-finish'))) return;
+  try {
+    await requestProjectFinish(id);
+    showToast(t('avail.toast-requested'), 'success');
+    await initDetailPage();
+  } catch (err) {
+    showToast(err.message || 'Failed to submit request.', 'error');
   }
 }
 
@@ -472,16 +556,20 @@ async function handleSubmitProject(e) {
 
 async function persistProject({ title, cat, dept, sup, email, dur, slots, desc, req, outcomes, tagsRaw, fileUrl, fileName }) {
   const tags = tagsRaw ? tagsRaw.split(',').map(tagItem => tagItem.trim()).filter(Boolean) : [];
+  const currentUser = auth.currentUser;
   const project = {
     id: generateId(),
     title, category: cat, department: dept,
     supervisor: sup, email, duration: dur, slots,
     description: desc, requirements: req, outcomes,
     tags, status: 'pending',
-    submittedBy: 'guest',
+    submittedBy: currentUser ? currentUser.uid : 'guest',
     submittedAt: new Date().toISOString(),
     reviewedAt: null, reviewNote: '',
     downloads: 0, fileUrl, fileName,
+    availabilityStatus: 'available',
+    finishRequested: false,
+    finishRequestedAt: null,
   };
   await saveProject(project);
 }
