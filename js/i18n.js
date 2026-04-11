@@ -96,8 +96,8 @@ const TRANSLATIONS = {
 
     'about.section1.title': 'Research Development Roadmap for Students',
     'about.s1.why.title':   '1. Why join research',
-    'about.stat1':          '2x graduation rate compared to non-research students',
-    'about.stat2':          '1.8x higher likelihood of pursuing graduate studies',
+    'about.stat1':          'x2 graduation rate compared to non-research students',
+    'about.stat2':          'x1.8 higher likelihood of pursuing graduate studies',
     'about.stat3':          'Employers prioritise candidates with research experience',
     'about.stat4':          'MIT students participate in research before graduating',
     'about.s1.benefits.title': '2. Specific benefits',
@@ -234,7 +234,7 @@ const TRANSLATIONS = {
     'sidebar.contact.hint':      'Xem email của giảng viên trong phần chi tiết dự án bên trên.',
 
     /* ---- About page ---- */
-    'about.hero.title': 'Câu lạc bộ Nghiên cứu HSB (HRC)',
+    'about.hero.title': 'Câu Lạc Bộ Nghiên cứu Khoa Học HSB (HRC)',
     'about.hero.sub':   'Xây dựng chương trình nghiên cứu sinh viên đẳng cấp quốc tế, hỗ trợ mục tiêu AACSB và định vị HSB trong top 100 trường kinh doanh châu Á.',
 
     'about.section1.title': 'Định Hướng Phát Triển Nghiên Cứu Cho Sinh Viên',
