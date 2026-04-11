@@ -234,7 +234,7 @@ const TRANSLATIONS = {
     'sidebar.contact.hint':      'Xem email của giảng viên trong phần chi tiết dự án bên trên.',
 
     /* ---- About page ---- */
-    'about.hero.title': 'Câu Lạc Bộ Nghiên cứu Khoa Học HSB (HRC)',
+    'about.hero.title': 'Câu Lạc Bộ Nghiên Cứu Khoa Học HSB (HRC)',
     'about.hero.sub':   'Xây dựng chương trình nghiên cứu sinh viên đẳng cấp quốc tế, hỗ trợ mục tiêu AACSB và định vị HSB trong top 100 trường kinh doanh châu Á.',
 
     'about.section1.title': 'Định Hướng Phát Triển Nghiên Cứu Cho Sinh Viên',
