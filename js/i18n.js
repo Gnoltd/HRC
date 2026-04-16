@@ -253,7 +253,7 @@ const TRANSLATIONS = {
     'about.road1.label': 'Năm 1 – 2',
     'about.road1.text':  'Học phương pháp nghiên cứu, tìm giảng viên phù hợp, làm trợ lý nghiên cứu cơ bản.',
     'about.road2.label': 'Năm 3',
-    'about.road2.text':  'Phân tích dữ liệu, viết phần literature review, đề xuất ý tưởng mở rộng.',
+    'about.road2.text':  'Phân tích dữ liệu, viết literature review, đề xuất ý tưởng mở rộng.',
     'about.road3.label': 'Năm 4',
     'about.road3.text':  'Khóa luận độc lập, trình bày hội thảo, chuẩn bị xuất bản.',
 
